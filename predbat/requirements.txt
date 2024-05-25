@@ -3,5 +3,4 @@ requests
 pyyaml
 asyncio
 aiohttp
-json
 multiprocessing
