@@ -27,8 +27,8 @@ if not os.path.exists("/config/apps.yaml"):
             break
     
     if tag_name:
-        download_url = "https://github.com/springfall2008/batpred/archive/refs/tags/{}.zip".format(tag_name)
-        save_path = "/config/predbat_{}.zip".format(tag_name)
+        download_url = "https://github.com/springfall2008/batpred/archive/refs/tags/{}.tar.gz".format(tag_name)
+        save_path = "/config/predbat_{}.tar.gz".format(tag_name)
         print("Downloading Predbat {}".format(download_url))
 
         try:
@@ -39,7 +39,7 @@ if not os.path.exists("/config/apps.yaml"):
             sys.exit(1)
 
         print("Unzipping Predbat")
-        os.system("unzip {} -d /config".format(save_path))
+        os.system("cd /config; gtar -xvzf {}; rm {}".format(save_path, save_path))
         print("Predbat unzipped successfully")
     else:
         print("Error: Unable to find a valid Predbat release")
