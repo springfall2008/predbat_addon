@@ -10,25 +10,32 @@ root = "/config"
 
 # Download the latest Predbat release from Github
 if not os.path.exists(root + "/apps.yaml"):
-    print("Download Predbat")
     url = "https://api.github.com/repos/springfall2008/batpred/releases"
+    print("Download Predbat release list from {}".format(url))
     try:
         r = requests.get(url)
     except Exception:
         print("Error: Unable to load data from Github url: {}".format(url))
+        print("Sleep 5 minutes before restarting")
+        time.sleep(5*60)
         sys.exit(1)
 
     try:
         pdata = r.json()
     except requests.exceptions.JSONDecodeError:
         print("Error: Unable to decode data from Github url: {}".format(url))
+        print("Sleep 5 minutes before restarting")
+        time.sleep(5*60)
         sys.exit(1)
 
+    print("Release data is {}".format(pdata))
     tag_name = None
-    for release in pdata:
-        if not release.get("prerelease", True):
-            tag_name = release.get("tag_name", "Unknown")
-            break
+
+    if pdata and isinstance(pdata, list):
+        for release in pdata:
+            if not release.get("prerelease", True):
+                tag_name = release.get("tag_name", "Unknown")
+                break
     
     if tag_name:
         download_url = "https://github.com/springfall2008/batpred/archive/refs/tags/{}.zip".format(tag_name)
@@ -53,7 +60,10 @@ if not os.path.exists(root + "/apps.yaml"):
         os.system("cp {}/apps/predbat/config/* {}".format(unzip_path, root))
     else:
         print("Error: Unable to find a valid Predbat release")
+        print("Sleep 5 minutes before restarting")
+        time.sleep(5*60)
         sys.exit(1)
+
 
 print("Startup")
 os.system("cd " + root + "; python3 hass.py")
