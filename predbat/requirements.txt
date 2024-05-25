@@ -1,2 +1,7 @@
 pytz
 requests
+yaml
+asyncio
+aiohttp
+json
+multiprocessing
