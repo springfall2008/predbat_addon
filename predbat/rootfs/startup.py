@@ -6,7 +6,7 @@ import shutil
 import time
 print("Bootstrap Predbat")
 
-root = "config"
+root = "/config"
 
 # Download the latest Predbat release from Github
 if not os.path.exists(root + "/apps.yaml"):
