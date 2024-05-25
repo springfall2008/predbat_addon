@@ -1,0 +1,15 @@
+---
+build_from:
+  amd64: "ghcr.io/hassio-addons/ubuntu-base/amd64:9.0.5"
+  aarch64: "ghcr.io/hassio-addons/ubuntu-base:9.0.5"
+  armhf: "ghcr.io/hassio-addons/ubuntu-base:9.0.5"
+  armv7: "ghcr.io/hassio-addons/ubuntu-base:9.0.5"
+  i386: "ghcr.io/hassio-addons/ubuntu-base:9.0.5"
+  #aarch64: ghcr.io/hassio-addons/debian-base/aarch64:stable
+  #amd64: ghcr.io/hassio-addons/debian-base/amd64:stable
+  #armhf: ghcr.io/hassio-addons/debian-base/armhf:stable
+  #armv7: ghcr.io/hassio-addons/debian-base/armv7:stable
+  #i386: ghcr.io/hassio-addons/debian-base/i386:stable
+codenotary:
+  base_image: tdlj@tdlj.net
+  signer: tdlj@tdlj.net
