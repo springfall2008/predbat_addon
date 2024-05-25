@@ -2,10 +2,14 @@ import os
 import requests
 import sys
 import urllib.request
+import shutil
+import time
 print("Bootstrap Predbat")
 
+root = "config"
+
 # Download the latest Predbat release from Github
-if not os.path.exists("/config/apps.yaml"):
+if not os.path.exists(root + "/apps.yaml"):
     print("Download Predbat")
     url = "https://api.github.com/repos/springfall2008/batpred/releases"
     try:
@@ -27,8 +31,8 @@ if not os.path.exists("/config/apps.yaml"):
             break
     
     if tag_name:
-        download_url = "https://github.com/springfall2008/batpred/archive/refs/tags/{}.tar.gz".format(tag_name)
-        save_path = "/config/predbat_{}.tar.gz".format(tag_name)
+        download_url = "https://github.com/springfall2008/batpred/archive/refs/tags/{}.zip".format(tag_name)
+        save_path = root + "/predbat_{}.zip".format(tag_name)
         print("Downloading Predbat {}".format(download_url))
 
         try:
@@ -39,13 +43,20 @@ if not os.path.exists("/config/apps.yaml"):
             sys.exit(1)
 
         print("Unzipping Predbat")
-        os.system("cd /config; gtar -xvzf {}; rm {}".format(save_path, save_path))
-        print("Predbat unzipped successfully")
+        unzip_path = root + "/unzip"
+        if os.path.exists(unzip_path):
+            shutil.rmtree(unzip_path)
+        os.makedirs(unzip_path)
+        shutil.unpack_archive(save_path, unzip_path)
+        unzip_path = unzip_path + "/batpred-" + tag_name.replace("v", "")
+        os.system("cp {}/apps/predbat/* {}".format(unzip_path, root))
+        os.system("cp {}/apps/predbat/config/* {}".format(unzip_path, root))
     else:
         print("Error: Unable to find a valid Predbat release")
         sys.exit(1)
 
 print("Startup")
-os.system("cd /config; python3 hass.py")
+os.system("cd " + root + "; python3 hass.py")
 
-print("Shutdown")
+print("Shutdown, sleeping 5 minutes before restarting")
+time.sleep(5*60)
