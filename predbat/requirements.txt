@@ -1,6 +1,6 @@
 pytz
 requests
-yaml
+pyyaml
 asyncio
 aiohttp
 json
