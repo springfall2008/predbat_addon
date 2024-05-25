@@ -1,0 +1,4 @@
+# https://developers.home-assistant.io/docs/add-ons/repository#repository-configuration
+name: Predai
+url: 'https://github.com/springfall2008/predai'
+maintainer: Trefor Southwell <tdlj@tdlj.net>
