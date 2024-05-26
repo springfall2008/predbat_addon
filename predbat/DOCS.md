@@ -1,130 +1,36 @@
-# PredAI
+#  Predbat Home Assistant Add-on
+Predbat Home Assistant Add-on
 
-Predai is a NeuralProphet integration for Home Assistant than can be used to predict future values of sensors given the history of that sensor.
+This add-on can be used with Home Assistant to run Predbat without AppDaemon
 
-See: https://neuralprophet.com/contents.html for documentation on the base AI library
+For Predbat documention see: https://springfall2008.github.io/batpred/
 
-## Installation:
+If you want to buy me a beer then please use Paypal - [tdlj@tdlj.net](mailto:tdlj@tdlj.net)
+![image](https://github.com/springfall2008/batpred/assets/48591903/b3a533ef-0862-4e0b-b272-30e254f58467)
 
-PredAI is a Home Assistant Add On, install it by going to:
-- Settings, Add-ons, Add-on Store, '...' (top right), Repositories,
-- Put 'https://github.com/springfall2008/predai' into the bottom box and Click Add, Close
-- Select PredAI from the list and select install.
-- Wait quite a while (could be 15-20 minutes) to install
-- Select Start
+## Installation instructions
 
-## Configuration
-- Edit '/addon_configs/93e0bb20_predai/predai.yaml' to configure the tool.
-- Then click Restart on the Add-on to ensure the configuration is read again
-- Check the log for any errors or warnings
+* Go to settings, add-ons, add-on store, custom repositories
+* add 'https://github.com/springfall2008/predbat_addon' as a new reposityr
 
-Example configuration
+![image](https://github.com/springfall2008/predbat_addon/assets/48591903/7eb18076-888b-4ea5-844b-cfa93157b759)
 
-```yaml
-update_every: 30
-sensors:
-  - name: sensor.givtcp_sa2243g277_load_energy_today_kwh
-    subtract: sensor.wallbox_portal_added_energy
-    days: 14
-    incrementing: True
-    reset_daily: True
-    interval: 30
-    units: kWh
-    future_periods: 96
-    database: True
-    reset_low: 1.0
-    reset_high: 2.0
-  - name: sensor.external_temperature
-    days: 14
-    interval: 30
-    incrementing: False
-    units: c
-    future_periods: 96
-```
+* Click out of the repository list and refresh the page
+* Scroll down and find Predbat, click on it and click 'Install'
+* Once installed you can click start, it will now download the latest Predbat and start it running
+* Predbat will error out as you have a Template configuration
+* Navigate to '/addon_configs/6adb4f0d_predbat' directory in Home Assistant file editor or via a Samba/SSH mount
+* Edit/replace the apps.yaml with the correct completed one as per Predbat documentation
+* Click restart on the add-on if need be (it might start automatically anyhow)
 
-**update_every** Sets the frequency of updates in minutes
+Please note the predbat.log will be in this addon_configs directory also.
 
-**Sensors** This is an array of entities to predict the future on
+Do not run this at the same time as the appdaemon-predbat or Predbat within AppDaemon (stop them first and remember to only have one on auto-start)
 
-  - **Name** Give the name of the entity exactly as in Home Assistant
-  - **Subtact** can be used to subtract another numerical value from the first entity, mostly used to remove things like car charging from energy data. Can also be a list of sensor names to subtract.
-  - **days** Sets how many days in the past to take the history from
-  - **incrementing** - When true the sensor is always incrementing (e.g. energy used), but can include resets. When False they are individual values.
-  - **reset_daily** - When true the sensor value is reset to 0 at midnight (e.g. energy per day)
-  - **interval** - Sets the prediction inverval, should divide into 60 e.g. 5, 10 , 15 , 30
-  - **Units** - Sets the output Unit to report in HA
-  - **future_periods** - Sets the number of periods (of interval minutes) to predict into the future
-  - **database** - When True (default) all data is stored in a sqllite3 database in the addon directory, this will keep a full history beyond what HA keeps and use
-that history for training. You can browse the data using an SQL Lite viewer on your computer.
-  - **export_days** - Sets how many days of history to include in the HA entities that are created, recommended values are 7-14. The default is **days**
-  - **reset_low/reset_high** - For incrementing sensors if the sensor goes above **reset_high** and then falls below **reset_low** then its considered a reset even
-  if it never goes to 0.
+## Copyright
 
-A new sensor with the name **name**_prediction will be created, this will contain two series:
-  - **results** contains the time series of the predictions, starts in the past so you can plot corrolation
-  - **source** contains the original source data that was used to make the prediction
-
-## Charting
-
-You can use Apex charts to plot the predictions for example for the above sensor we plot a corrolation chart
-
-<img width="494" alt="image" src="https://github.com/springfall2008/predai/assets/48591903/070ae165-f242-4ce9-a7e1-aef9294c82af">
-
-
-```yaml
-type: custom:apexcharts-card
-header:
-  show: true
-  title: Data prediction
-  show_states: true
-  colorize_states: true
-graph_span: 8d
-span:
-  start: day
-  offset: '-6d'
-now:
-  show: true
-yaxis:
-  - min: 0
-series:
-  - entity: sensor.givtcp_sa2243g277_load_energy_today_kwh
-    stroke_width: 1
-    curve: smooth
-    name: Load
-  - entity: sensor.givtcp_sa2243g277_load_energy_today_kwh_prediction
-    stroke_width: 1
-    curve: smooth
-    name: AI Load
-    show:
-      in_header: raw
-    data_generator: >
-      let res = []; for (const [key, value] of
-      Object.entries(entity.attributes.results)) { res.push([new
-      Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
-      b[0]  })
-  - entity: sensor.givtcp_sa2243g277_load_energy_today_kwh_prediction
-    stroke_width: 1
-    curve: smooth
-    name: AI Load Source
-    show:
-      in_header: raw
-    data_generator: >
-      let res = []; for (const [key, value] of
-      Object.entries(entity.attributes.source)) { res.push([new
-      Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
-      b[0]  })
-```
-
-## Use within Predbat
-
-You can use the AI load prediction in Predbat by setting it in the apps.yaml
-
-This will disable the use of Predbat internal predictions and instead use the AI based one for load forecasts.
-
-e.g.
-
-```yaml
-  load_forecast_only: True
-  load_forecast:
-     - sensor.givtcp_{geserial}_load_energy_today_kwh_prediction$results
+```text
+Copyright (c) Trefor Southwell 2024 - All rights reserved
+This software maybe used at no cost for personal use only.
+No warranty is given, either expressed or implied.
 ```
