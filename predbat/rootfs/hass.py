@@ -24,6 +24,7 @@ def check_modified(py_files, start_time):
         last_modified = os.path.getmtime(file_path)
         last_modified_timestamp = datetime.fromtimestamp(last_modified)
         if last_modified_timestamp > start_time:
+            self.log("File {} was modified".format(file_path), quiet=False)
             return True
     return False
 
