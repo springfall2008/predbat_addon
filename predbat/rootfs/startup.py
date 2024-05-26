@@ -28,7 +28,6 @@ if not os.path.exists(root + "/apps.yaml"):
         time.sleep(5*60)
         sys.exit(1)
 
-    print("Release data is {}".format(pdata))
     tag_name = None
 
     if pdata and isinstance(pdata, list):
