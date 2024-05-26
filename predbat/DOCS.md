@@ -44,7 +44,22 @@ Predbat can be run on a seperate machine also, you will need a MacOS with Python
 
 ## Running from within Docker
 
-This should also be possible, still need to create the right DockerFile - TODO
+* Download the contents of 'https://github.com/springfall2008/predbat_addon/tree/main/predbat' onto your machine
+* You should see Dockerfile.standalone and rootfs directories
+* Download predbat.py from Predbat repo (https://github.com/springfall2008/batpred/blob/main/apps/predbat/predbat.py) and place it into rootfs
+* Download apps.yaml from Predbat repo (https://github.com/springfall2008/batpred/blob/main/apps/predbat/config/apps.yaml), place it into rootfs and edit it as per the Predbat documentation.
+* Add ha_url / ha_key settings into apps.yaml.
+  * The ha_url must be your Home Assistant machine e.g. http://homeassistant.local:8123
+  * The ha_key must be the persistant key you can generate in Home Assistant in your user/security section
+
+* Build and run your docker as follows:
+
+```
+docker build . -t predbat -f ./Dockerfile.standalone
+docker run docker.io/library/predbat
+```
+
+Look into the docker under /config/predbat.log for the logfiles
 
 ## Copyright
 
