@@ -1,165 +1,75 @@
-import io
-import yaml
-import sys
-import asyncio
-import predbat
-import time
-from datetime import datetime, timedelta
-import logging
-import logging.config
-from multiprocessing import Pool, cpu_count, set_start_method
-import concurrent.futures
-from aiohttp import web, ClientSession, WSMsgType
-import threading
 import os
+import requests
+import sys
+import urllib.request
+import shutil
+import time
+print("Bootstrap Predbat")
 
+root = "/config"
 
-def check_modified(py_files, start_time):
-    """
-    Check if .py file was changed since we started
-    """
+# Check if config exists, if not run locally
+if not os.path.exists(root):
+    root = "./"
 
-    # Check the last modified timestamp of each .py file
-    for file_path in py_files:
-        last_modified = os.path.getmtime(file_path)
-        last_modified_timestamp = datetime.fromtimestamp(last_modified)
-        if last_modified_timestamp > start_time:
-            print("File {} was modified".format(file_path), quiet=False)
-            return True
-    return False
-
-
-async def main():
-    print("**** Starting Standalone Predbat ****")
-    start_time = datetime.now()
+# Download the latest Predbat release from Github
+if not os.path.exists(root + "/apps.yaml"):
+    url = "https://api.github.com/repos/springfall2008/batpred/releases"
+    print("Download Predbat release list from {}".format(url))
+    try:
+        r = requests.get(url)
+    except Exception:
+        print("Error: Unable to load data from Github url: {}".format(url))
+        print("Sleep 5 minutes before restarting")
+        time.sleep(5*60)
+        sys.exit(1)
 
     try:
-        p_han = predbat.PredBat()
-        p_han.initialize()
-    except Exception as e:
-        print("Error: Failed to start predbat {}".format(e))
-        return
+        pdata = r.json()
+    except requests.exceptions.JSONDecodeError:
+        print("Error: Unable to decode data from Github url: {}".format(url))
+        print("Sleep 5 minutes before restarting")
+        time.sleep(5*60)
+        sys.exit(1)
 
-    # Find all .py files in the directory hierarchy
-    py_files = []
-    for root, dirs, files in os.walk("."):
-        for file in files:
-            if (file.endswith(".py") or file == "apps.yaml") and not file.startswith("."):
-                py_files.append(os.path.join(root, file))
-    print("Watching {} for changes".format(py_files))
+    tag_name = None
 
-    # Runtime loop
-    while True:
-        time.sleep(1)
-        await p_han.timer_tick()
-        if check_modified(py_files, start_time):
-            print("Stopping Predbat due to file changes....")
-            await p_han.stop_all()
-            break
+    if pdata and isinstance(pdata, list):
+        for release in pdata:
+            if not release.get("prerelease", True):
+                tag_name = release.get("tag_name", "Unknown")
+                break
+    
+    if tag_name:
+        download_url = "https://github.com/springfall2008/batpred/archive/refs/tags/{}.zip".format(tag_name)
+        save_path = root + "/predbat_{}.zip".format(tag_name)
+        print("Downloading Predbat {}".format(download_url))
+
+        try:
+            urllib.request.urlretrieve(download_url, save_path)
+            print("Predbat downloaded successfully")
+        except Exception as e:
+            print("Error: Unable to download Predbat - {}".format(str(e)))
+            sys.exit(1)
+
+        print("Unzipping Predbat")
+        unzip_path = root + "/unzip"
+        if os.path.exists(unzip_path):
+            shutil.rmtree(unzip_path)
+        os.makedirs(unzip_path)
+        shutil.unpack_archive(save_path, unzip_path)
+        unzip_path = unzip_path + "/batpred-" + tag_name.replace("v", "")
+        os.system("cp {}/apps/predbat/* {}".format(unzip_path, root))
+        os.system("cp {}/apps/predbat/config/* {}".format(unzip_path, root))
+    else:
+        print("Error: Unable to find a valid Predbat release")
+        print("Sleep 5 minutes before restarting")
+        time.sleep(5*60)
+        sys.exit(1)
 
 
-if __name__ == "__main__":
-    set_start_method("fork")
-    asyncio.run(main())
-    sys.exit(0)
+print("Startup")
+os.system("cd " + root + "; python3 hass.py")
 
-
-class Hass:
-    def log(self, msg, quiet=True):
-        """
-        Log a message to the logfile
-        """
-        message = "{}: {}\n".format(datetime.now(), msg)
-        self.logfile.write(message)
-        self.logfile.flush()
-        if not quiet:
-            print(message, end="")
-        log_size = self.logfile.tell()
-        if log_size > 10000000:
-            self.logfile.close()
-            os.rename("predbat.log", "predbat.log.1")
-            self.logfile = open("predbat.log", "w")
-
-    async def run_in_executor(self, callback, *args):
-        """
-        Run a function in the executor
-        """
-        with concurrent.futures.ThreadPoolExecutor() as pool:
-            future = pool.submit(callback, *args)
-            return future
-
-    async def task_waiter_async(self, task):
-        """
-        Waits for a task to complete async
-        """
-        await task
-
-    def task_waiter(self, task):
-        """
-        Waits for a task to complete
-        """
-        asyncio.run(self.task_waiter_async(task))
-
-    def create_task(self, task):
-        """
-        Creates a new thread to run the task in
-        """
-        self.log("Creating task: {}".format(task), quiet=False)
-        t1 = threading.Thread(name="TaskCreate", target=self.task_waiter, args=[task])
-        t1.start()
-        self.threads.append(t1)
-        return t1
-
-    async def stop_all(self):
-        """
-        Stop Predbat
-        """
-        self.log("Stopping Predbat", quiet=False)
-        await self.terminate()
-
-        for t in self.threads:
-            t.join()
-        self.logfile.close()
-
-    def __init__(self):
-        """
-        Start Predbat
-        """
-        self.args = {}
-        self.run_list = []
-        self.threads = []
-
-        self.logfile = open("predbat.log", "a")
-
-        # Open YAML file apps.yaml and read it
-        self.log("Loading apps.yaml", quiet=False)
-        with io.open("apps.yaml", "r") as stream:
-            try:
-                config = yaml.safe_load(stream)
-                self.args = config["pred_bat"]
-            except yaml.YAMLError as exc:
-                print(exc)
-                sys.exit(1)
-
-    def run_every(self, callback, next_time, run_every, **kwargs):
-        """
-        Run a function every x seconds
-        """
-        self.run_list.append({"callback": callback, "next_time": next_time, "run_every": run_every, "kwargs": kwargs})
-        return True
-
-    async def timer_tick(self):
-        """
-        Timer tick function, executes tasks at the correct time
-        """
-        now = datetime.now()
-        for item in self.run_list:
-            if now > item["next_time"]:
-                self.log("Running task: {}".format(item["callback"]), quiet=False)
-                try:
-                    item["callback"](None)
-                except Exception as e:
-                    self.log("Error: {}".format(e), quiet=False)
-                while now > item["next_time"]:
-                    run_every = timedelta(seconds=item["run_every"])
-                    item["next_time"] += run_every
+print("Shutdown, sleeping 30 seconds before restarting")
+time.sleep(30)
