@@ -24,7 +24,7 @@ def check_modified(py_files, start_time):
         last_modified = os.path.getmtime(file_path)
         last_modified_timestamp = datetime.fromtimestamp(last_modified)
         if last_modified_timestamp > start_time:
-            print("File {} was modified".format(file_path), quiet=False)
+            print("File {} was modified".format(file_path))
             return True
     return False
 
@@ -44,7 +44,7 @@ async def main():
     py_files = []
     for root, dirs, files in os.walk("."):
         for file in files:
-            if file.endswith(".py") or file == "apps.yaml":
+            if (file.endswith(".py") or file == "apps.yaml") and not file.startswith("."):
                 py_files.append(os.path.join(root, file))
     print("Watching {} for changes".format(py_files))
 
