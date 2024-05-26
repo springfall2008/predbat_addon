@@ -44,7 +44,7 @@ async def main():
     py_files = []
     for root, dirs, files in os.walk("."):
         for file in files:
-            if (file.endswith(".py") or file.endswith(".yaml")) and not file.startswith('.'):
+            if file.endswith(".py") or file == "apps.yaml":
                 py_files.append(os.path.join(root, file))
     print("Watching {} for changes".format(py_files))
 
