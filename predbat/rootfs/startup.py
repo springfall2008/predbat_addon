@@ -8,6 +8,10 @@ print("Bootstrap Predbat")
 
 root = "/config"
 
+# Check if config exists, if not run locally
+if not os.path.exists(root):
+    root = "./"
+
 # Download the latest Predbat release from Github
 if not os.path.exists(root + "/apps.yaml"):
     url = "https://api.github.com/repos/springfall2008/batpred/releases"
