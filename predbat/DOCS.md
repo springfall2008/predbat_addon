@@ -3,6 +3,8 @@ Predbat Home Assistant Add-on
 
 This add-on can be used with Home Assistant to run Predbat without AppDaemon
 
+![image](https://github.com/springfall2008/predbat_addon/assets/48591903/50580da1-5110-4711-b740-1c14cc103835)
+
 For Predbat documention see: https://springfall2008.github.io/batpred/
 
 If you want to buy me a beer then please use Paypal - [tdlj@tdlj.net](mailto:tdlj@tdlj.net)
