@@ -43,7 +43,7 @@ async def main():
     py_files = []
     for root, dirs, files in os.walk("."):
         for file in files:
-            if file.endswith(".py") or file.endswith(".yaml"):
+            if (file.endswith(".py") or file.endswith(".yaml")) and not file.startswith('.'):
                 py_files.append(os.path.join(root, file))
     print("Watching {} for changes".format(py_files))
 
@@ -155,7 +155,10 @@ class Hass:
         for item in self.run_list:
             if now > item["next_time"]:
                 self.log("Running task: {}".format(item["callback"]), quiet=False)
-                item["callback"](None)
+                try:
+                    item["callback"](None)
+                except Exception as e:
+                    self.log("Error: {}".format(e), quiet=False)
                 while now > item["next_time"]:
                     run_every = timedelta(seconds=item["run_every"])
                     item["next_time"] += run_every
