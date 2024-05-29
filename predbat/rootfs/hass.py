@@ -72,7 +72,8 @@ class Hass:
         message = "{}: {}\n".format(datetime.now(), msg)
         self.logfile.write(message)
         self.logfile.flush()
-        if not quiet:
+        msg_lower = msg.lower()
+        if not quiet or msg_lower.startswith("error") or msg_lower.startswith('warn'):
             print(message, end="")
         log_size = self.logfile.tell()
         if log_size > 10000000:
@@ -155,7 +156,6 @@ class Hass:
         now = datetime.now()
         for item in self.run_list:
             if now > item["next_time"]:
-                self.log("Running task: {}".format(item["callback"]), quiet=False)
                 try:
                     item["callback"](None)
                 except Exception as e:
