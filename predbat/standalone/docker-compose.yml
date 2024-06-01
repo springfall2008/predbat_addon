@@ -1,0 +1,14 @@
+
+# Small container to run predbat 
+services:
+  predbat:
+    container_name: predbat 
+    image: predbat:latest
+    build: 
+      context: ../
+      dockerfile: ./standalone/Dockerfile
+    environment:
+      TZ: 'Europe/London'
+    volumes:
+      - /path/to/predbat/files:/config
+    restart: unless-stopped

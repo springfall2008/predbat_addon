@@ -61,6 +61,28 @@ docker run docker.io/library/predbat
 
 Look into the docker under /config/predbat.log for the logfiles
 
+## Running with docker compose
+
+* Download the contents of 'https://github.com/springfall2008/predbat_addon/tree/main/predbat' onto your machine
+* Go the the predbat/standalone directory
+* Update location for apps.yaml, dashboard.yaml and log files in the docker-compose (/config volume inside the container):
+```
+      - /path/to/predbat/files:/config
+```
+* Download apps.yaml from Predbat repo (https://github.com/springfall2008/batpred/blob/main/apps/predbat/config/apps.yaml) to location set above, and edit it as per the Predbat documentation.
+* Add ha_url / ha_key settings into apps.yaml.
+  * The ha_url must be your Home Assistant machine e.g. http://homeassistant.local:8123
+  * The ha_key must be the persistant key you can generate in Home Assistant in your user/security section
+
+
+* Start the container as follows:
+
+```
+docker compose up -d
+```
+
+When editing apps.yaml, remember to restart the container.
+
 ## Copyright
 
 ```text

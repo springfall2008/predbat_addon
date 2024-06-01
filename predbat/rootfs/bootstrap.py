@@ -13,7 +13,7 @@ if not os.path.exists(root):
     root = "./"
 
 # Download the latest Predbat release from Github
-if not os.path.exists(root + "/apps.yaml"):
+if not os.path.exists(root + "/predbat.py"):
     url = "https://api.github.com/repos/springfall2008/batpred/releases"
     print("Download Predbat release list from {}".format(url))
     try:
@@ -60,7 +60,9 @@ if not os.path.exists(root + "/apps.yaml"):
         shutil.unpack_archive(save_path, unzip_path)
         unzip_path = unzip_path + "/batpred-" + tag_name.replace("v", "")
         os.system("cp {}/apps/predbat/* {}".format(unzip_path, root))
-        os.system("cp {}/apps/predbat/config/* {}".format(unzip_path, root))
+        if not os.path.exists(root + "/apps.yaml"):
+            print("No apps.yaml found - extracting default.")
+            os.system("cp {}/apps/predbat/config/* {}".format(unzip_path, root))
     else:
         print("Error: Unable to find a valid Predbat release")
         print("Sleep 5 minutes before restarting")
@@ -68,8 +70,5 @@ if not os.path.exists(root + "/apps.yaml"):
         sys.exit(1)
 
 
-print("Startup")
-os.system("cd " + root + "; python3 hass.py")
+print("Bootstrapped!")
 
-print("Shutdown, sleeping 30 seconds before restarting")
-time.sleep(30)
