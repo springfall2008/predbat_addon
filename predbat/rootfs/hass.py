@@ -12,6 +12,7 @@ import concurrent.futures
 from aiohttp import web, ClientSession, WSMsgType
 import threading
 import os
+import traceback
 
 
 def check_modified(py_files, start_time):
@@ -38,6 +39,7 @@ async def main():
         p_han.initialize()
     except Exception as e:
         print("Error: Failed to start predbat {}".format(e))
+        print(traceback.format_exc())
         return
 
     # Find all .py files in the directory hierarchy
@@ -160,6 +162,7 @@ class Hass:
                     item["callback"](None)
                 except Exception as e:
                     self.log("Error: {}".format(e), quiet=False)
+                    print(traceback.format_exc())
                 while now > item["next_time"]:
                     run_every = timedelta(seconds=item["run_every"])
                     item["next_time"] += run_every
