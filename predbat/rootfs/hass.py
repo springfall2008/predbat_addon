@@ -75,7 +75,7 @@ class Hass:
         self.logfile.write(message)
         self.logfile.flush()
         msg_lower = msg.lower()
-        if not quiet or msg_lower.startswith("error") or msg_lower.startswith('warn'):
+        if not quiet or msg_lower.startswith("error") or msg_lower.startswith('warn') or msg_lower.startswith('info'):
             print(message, end="")
         log_size = self.logfile.tell()
         if log_size > 10000000:
