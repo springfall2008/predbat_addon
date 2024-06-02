@@ -1,30 +1,14 @@
-#install python en pip
-FROM ubuntu:noble
+FROM python:3-slim-bookworm
 
-# Set shell
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+WORKDIR /
+COPY /rootfs /
+COPY requirements.txt /
 
-RUN apt-get update
-RUN apt-get upgrade -y
-RUN apt-get dist-upgrade -y
-RUN apt-get install -y python3
-RUN apt-get install -y python3-pip
-RUN apt-get install -y python3-venv
-RUN apt-get install -y python3-requests
-RUN apt-get install -y python3-yaml
-#RUN apt-get install -y python3-asyncio
-RUN apt-get install -y python3-aiohttp
-RUN apt-get install csh
-RUN apt-get install -y python3-tz
-
-WORKDIR /config
-COPY rootfs /config
-
-#COPY requirements.txt /tmp/
-#RUN pip3 install -r /tmp/requirements.txt
+# Install dependencies
+RUN pip3 --no-cache-dir install -r /requirements.txt
 
 # Start app
-RUN chmod a+x run.csh
+RUN chmod a+x run.sh
 
 ARG BUILD_ARCH
 ARG BUILD_DATE
@@ -52,4 +36,4 @@ LABEL \
     org.opencontainers.image.revision=${BUILD_REF} \
     org.opencontainers.image.version=${BUILD_VERSION}
 
-CMD [ "csh", "-f", "run.csh"]
+ENTRYPOINT /run.sh
