@@ -22,10 +22,14 @@ def check_modified(py_files, start_time):
 
     # Check the last modified timestamp of each .py file
     for file_path in py_files:
-        last_modified = os.path.getmtime(file_path)
-        last_modified_timestamp = datetime.fromtimestamp(last_modified)
-        if last_modified_timestamp > start_time:
-            print("File {} was modified".format(file_path))
+        if os.path.exists(file_path):
+            last_modified = os.path.getmtime(file_path)
+            last_modified_timestamp = datetime.fromtimestamp(last_modified)
+            if last_modified_timestamp > start_time:
+                print("File {} was modified".format(file_path))
+                return True
+        else:
+            print("File {} does not exist".format(file_path))
             return True
     return False
 
