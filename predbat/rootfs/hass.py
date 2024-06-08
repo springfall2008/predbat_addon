@@ -121,6 +121,7 @@ class Hass:
         await self.terminate()
 
         for t in self.threads:
+            t.terminate()
             t.join()
         self.logfile.close()
 
