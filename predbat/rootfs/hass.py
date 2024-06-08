@@ -125,8 +125,7 @@ class Hass:
         await self.terminate()
 
         for t in self.threads:
-            t.terminate()
-            t.join()
+            t.join(5*60)
         self.logfile.close()
 
     def __init__(self):
