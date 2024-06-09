@@ -40,10 +40,17 @@ async def main():
 
     try:
         p_han = predbat.PredBat()
+    except Exception as e:
+        print("Error: Failed to construct predbat {}".format(e))
+        print(traceback.format_exc())
+        return
+    
+    try:
         p_han.initialize()
     except Exception as e:
-        print("Error: Failed to start predbat {}".format(e))
+        print("Error: Failed to initialize predbat {}".format(e))
         print(traceback.format_exc())
+        await p_han.stop_all()
         return
 
     # Find all .py files in the directory hierarchy
