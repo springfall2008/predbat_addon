@@ -54,10 +54,10 @@ async def main():
         return
 
     # Find all .py files in the directory hierarchy
-    py_files = []
+    py_files = ['/config/apps.yaml']
     for root, dirs, files in os.walk("."):
         for file in files:
-            if (file.endswith(".py") or file == "apps.yaml") and not file.startswith("."):
+            if (file.endswith(".py")) and not file.startswith("."):
                 py_files.append(os.path.join(root, file))
     print("Watching {} for changes".format(py_files))
 
@@ -91,8 +91,8 @@ class Hass:
         log_size = self.logfile.tell()
         if log_size > 10000000:
             self.logfile.close()
-            os.rename("predbat.log", "predbat.log.1")
-            self.logfile = open("predbat.log", "w")
+            os.rename("/config/predbat.log", "/config/predbat.log.1")
+            self.logfile = open("/config/predbat.log", "w")
 
     async def run_in_executor(self, callback, *args):
         """
@@ -143,11 +143,11 @@ class Hass:
         self.run_list = []
         self.threads = []
 
-        self.logfile = open("predbat.log", "a")
+        self.logfile = open("/config/predbat.log", "a")
 
         # Open YAML file apps.yaml and read it
         self.log("Loading apps.yaml", quiet=False)
-        with io.open("apps.yaml", "r") as stream:
+        with io.open("/config/apps.yaml", "r") as stream:
             try:
                 config = yaml.safe_load(stream)
                 self.args = config["pred_bat"]

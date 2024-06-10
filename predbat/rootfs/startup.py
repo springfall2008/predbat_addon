@@ -6,14 +6,14 @@ import shutil
 import time
 print("Bootstrap Predbat")
 
-root = "/config"
+root = "/wkspace"
 
 # Check if config exists, if not run locally
 if not os.path.exists(root):
     root = "./"
 
 # Download the latest Predbat release from Github
-if not os.path.exists(root + "/apps.yaml"):
+if not os.path.exists("/config/apps.yaml"):
     url = "https://api.github.com/repos/springfall2008/batpred/releases"
     print("Download Predbat release list from {}".format(url))
     try:
