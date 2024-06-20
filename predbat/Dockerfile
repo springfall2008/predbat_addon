@@ -6,8 +6,7 @@ FROM $BUILD_FROM
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN apt-get update
-RUN apt-get upgrade -y
+RUN apt-get update && apt-get install -y
 RUN apt-get dist-upgrade -y
 RUN apt-get install -y python3
 RUN apt-get install -y python3-pip
