@@ -61,6 +61,7 @@ if not os.path.exists("/config/apps.yaml"):
         unzip_path = unzip_path + "/batpred-" + tag_name.replace("v", "")
         os.system("cp {}/apps/predbat/* {}".format(unzip_path, root))
         os.system("cp {}/apps/predbat/config/* {}".format(unzip_path, root))
+        os.system("rm -rf {}".format(unzip_path))
     else:
         print("Error: Unable to find a valid Predbat release")
         print("Sleep 5 minutes before restarting")

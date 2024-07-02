@@ -22,10 +22,14 @@ def check_modified(py_files, start_time):
 
     # Check the last modified timestamp of each .py file
     for file_path in py_files:
-        last_modified = os.path.getmtime(file_path)
-        last_modified_timestamp = datetime.fromtimestamp(last_modified)
-        if last_modified_timestamp > start_time:
-            print("File {} was modified".format(file_path))
+        if os.path.exists(file_path):
+            last_modified = os.path.getmtime(file_path)
+            last_modified_timestamp = datetime.fromtimestamp(last_modified)
+            if last_modified_timestamp > start_time:
+                print("File {} was modified".format(file_path))
+                return True
+        else:
+            print("File {} does not exist".format(file_path))
             return True
     return False
 
@@ -36,10 +40,17 @@ async def main():
 
     try:
         p_han = predbat.PredBat()
+    except Exception as e:
+        print("Error: Failed to construct predbat {}".format(e))
+        print(traceback.format_exc())
+        return
+    
+    try:
         p_han.initialize()
     except Exception as e:
-        print("Error: Failed to start predbat {}".format(e))
+        print("Error: Failed to initialize predbat {}".format(e))
         print(traceback.format_exc())
+        await p_han.stop_all()
         return
 
     # Find all .py files in the directory hierarchy
@@ -121,7 +132,7 @@ class Hass:
         await self.terminate()
 
         for t in self.threads:
-            t.join()
+            t.join(5*60)
         self.logfile.close()
 
     def __init__(self):
