@@ -1,0 +1,80 @@
+services:
+  eager_sammet:
+
+    cap_drop:
+      - "AUDIT_CONTROL"
+      - "BLOCK_SUSPEND"
+      - "DAC_READ_SEARCH"
+      - "IPC_LOCK"
+      - "IPC_OWNER"
+      - "LEASE"
+      - "LINUX_IMMUTABLE"
+      - "MAC_ADMIN"
+      - "MAC_OVERRIDE"
+      - "NET_ADMIN"
+      - "NET_BROADCAST"
+      - "SYSLOG"
+      - "SYS_ADMIN"
+      - "SYS_BOOT"
+      - "SYS_MODULE"
+      - "SYS_NICE"
+      - "SYS_PACCT"
+      - "SYS_PTRACE"
+      - "SYS_RAWIO"
+      - "SYS_RESOURCE"
+      - "SYS_TIME"
+      - "SYS_TTY_CONFIG"
+      - "WAKE_ALARM"
+
+    command:
+      - "csh"
+      - "-f"
+      - "run.csh"
+
+    container_name: "eager_sammet"
+
+    environment:
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+    hostname: "948b22e2f2d0"
+
+    image: "docker.io/library/predbat:latest"
+
+    ipc: "private"
+
+    labels:
+      io.hass.arch: ""
+      io.hass.description: ""
+      io.hass.name: ""
+      io.hass.type: "addon"
+      io.hass.version: ""
+      maintainer: "springfall2008 (https://github.com/springfall2008)"
+      org.opencontainers.image.authors: "springfall2008 (https://github.com/springfall2008)"
+      org.opencontainers.image.created: ""
+      org.opencontainers.image.description: ""
+      org.opencontainers.image.documentation: "https://github.com//blob/main/README.md"
+      org.opencontainers.image.licenses: "MIT"
+      org.opencontainers.image.ref.name: "ubuntu"
+      org.opencontainers.image.revision: ""
+      org.opencontainers.image.source: "https://github.com/"
+      org.opencontainers.image.title: ""
+      org.opencontainers.image.url: "https://github.com/springfall2008"
+      org.opencontainers.image.vendor: "Springfall2008"
+      org.opencontainers.image.version: ""
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "host"
+
+    ports:
+      - "5052:5052/tcp"
+
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/wkspace/homeassistant/predbat:/config"
+
+    working_dir: "/wkspace"
+
+version: "3.6"
