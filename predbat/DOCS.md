@@ -61,6 +61,59 @@ docker run docker.io/library/predbat
 
 Look into the docker under /config/predbat.log for the logfiles
 
+## Pre-build Docker Container
+
+Credit to Nic for building this
+
+These are all prebuilt images that will support both amd64 & arm processors (so Raspberry PI, most NAS & PCs). They can be installed as either a fully enclosed container or a container with mounted external volumes and will populate the /config directory on creation and start-up. To do this I have a run.standalone.sh start-up file which does the file copy on first boot - I do not use the run.csh or run.sh start-up files from the add-on although they are pretty much the same as I wanted to standardise on one start-up file that supported all architectures.
+
+As mentioned the only issue I have is that with the template apps.yaml the logs throw lots of errors until a modified config file is added to the volume
+
+### Running
+
+Each image will run as a standalone Docker container using the following command
+
+```
+Docker run -d –-name predbat -v /etc/localtime:/etc/localtime nipar44/predbat_addon:tag – See below for tag descriptions
+```
+
+The container logs will error until the apps.yaml template is completed, this can either be modified directly in the container or overwritten by copying an updated version to the container /config directory using ‘docker cp’
+
+### Tags
+
+* Latest & versions – an unmodified build from Docker.standalone in the predbat_addon git
+* alpine-latest & slim-latest – modified builds for systems needing a container with a smaller footprint,
+* test – probably broken
+
+### Basic Docker Compose
+
+```
+services:
+    predbat:
+      container_name: predbat
+      image: nipar44/predbat_addon:latest
+      restart: unless-stopped
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+```
+
+Note: Every time the container is upgraded & recreated the modified apps.yaml will need to copied to the container /config directory
+
+### Alternative Compose (files outside container)
+
+This compose will mount a volume in the container under the /config directory which is accessible from outside the docker container allowing all files to survive during a container rebuild
+
+```
+services:
+    predbat:
+      container_name: predbat
+      image: nipar44/predbat_addon:latest
+      restart: unless-stopped
+      volumes:
+        - ./config:/config:rw 
+        - /etc/localtime:/etc/localtime:ro
+```
+
 ## Copyright
 
 ```text
