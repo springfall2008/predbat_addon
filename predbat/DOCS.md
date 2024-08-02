@@ -46,7 +46,7 @@ Predbat can be run on a seperate machine also, you will need a MacOS with Python
 
 * Download the contents of 'https://github.com/springfall2008/predbat_addon/tree/main/predbat' onto your machine
 * You should see Dockerfile.standalone and rootfs directories
-* Download predbat.py from Predbat repo (https://github.com/springfall2008/batpred/blob/main/apps/predbat/predbat.py) and place it into rootfs
+* Download *.py from Predbat repo (https://github.com/springfall2008/batpred/blob/main/apps/predbat/predbat.py) and place the code into rootfs
 * Download apps.yaml from Predbat repo (https://github.com/springfall2008/batpred/blob/main/apps/predbat/config/apps.yaml), place it into rootfs and edit it as per the Predbat documentation.
 * Add ha_url / ha_key settings into apps.yaml.
   * The ha_url must be your Home Assistant machine e.g. http://homeassistant.local:8123
