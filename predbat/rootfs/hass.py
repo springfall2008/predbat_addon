@@ -88,10 +88,21 @@ class Hass:
         msg_lower = msg.lower()
         if not quiet or msg_lower.startswith("error") or msg_lower.startswith('warn') or msg_lower.startswith('info'):
             print(message, end="")
+
+        # maximum number of historic logfiles to retain
+        max_logs = 9
+        
         log_size = self.logfile.tell()
         if log_size > 10000000:
+            # check for existence of previous logfiles and rename each in turn
+            for num_logs in range(max_logs - 1, 1, -1):
+                filename = "predbat." + format(num_logs) + ".log"
+                if os.path.isfile(filename):
+                    newfile = "predbat." + format(num_logs + 1) + ".log"
+                    os.rename(filename, newfile)
+            
             self.logfile.close()
-            os.rename("predbat.log", "predbat.log.1")
+            os.rename("predbat.log", "predbat.1.log")
             self.logfile = open("predbat.log", "w")
 
     async def run_in_executor(self, callback, *args):
