@@ -1,6 +1,6 @@
 ---
 name: predbat
-version: 1.1.9
+version: 1.1.10
 slug: predbat
 description: Home Battery Prediction and Control
 url: https://github.com/springfall2008/predbat_addon
@@ -15,8 +15,10 @@ homeassistant_api: true
 hassio_api: true
 hassio_role: admin
 auth_api: true
-ingress: true
-ingress_port: 8099
+ports:
+  5052/tcp: 5052
+ports_description:
+  5052/tcp: Predbat
 map:
   - addon_config:rw
   - homeassistant_config:rw
