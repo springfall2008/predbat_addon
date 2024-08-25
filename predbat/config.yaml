@@ -4,6 +4,7 @@ version: 1.1.16
 slug: predbat
 description: Home Battery Prediction and Control
 url: https://github.com/springfall2008/predbat_addon
+webui: http://[HOST]:[PORT:5052]/
 codenotary: tdlj@tdlj.net
 arch:
   - aarch64
@@ -14,7 +15,6 @@ homeassistant_api: true
 hassio_api: true
 hassio_role: admin
 auth_api: true
-ingress: true
 map:
   - addon_config:rw
   - homeassistant_config:rw
