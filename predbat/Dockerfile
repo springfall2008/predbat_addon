@@ -10,23 +10,16 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get dist-upgrade -y
 RUN apt-get install -y python3
 RUN apt-get install -y python3-pip
-#RUN apt-get install -y python3.11-venv
 
 WORKDIR /app_data
 COPY rootfs /
+COPY ingress.conf /etc/nginx/http.d/
 
 COPY requirements.txt /tmp/
 RUN pip install -r /tmp/requirements.txt
 
 # Start app
 RUN chmod a+x /run.sh
-
-#ENV VIRTUAL_ENV=/root/venv/day_ahead
-#RUN python3 -m venv $VIRTUAL_ENV
-#ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-#COPY requirements.txt /tmp/
-#RUN pip3 install -r /tmp/requirements.txt
 
 ARG BUILD_ARCH
 ARG BUILD_DATE
@@ -54,5 +47,4 @@ LABEL \
     org.opencontainers.image.revision=${BUILD_REF} \
     org.opencontainers.image.version=${BUILD_VERSION}
 
-# CMD ["python3", "/startup.py"]
 #CMD [ "/run.sh" ]
