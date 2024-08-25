@@ -13,7 +13,7 @@ RUN apt-get install -y python3-pip
 
 WORKDIR /app_data
 COPY rootfs /
-COPY ingress.conf /etc/nginx/http.d/
+# COPY ingress.conf /etc/nginx/http.d/
 
 COPY requirements.txt /tmp/
 RUN pip install -r /tmp/requirements.txt
