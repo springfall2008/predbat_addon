@@ -15,8 +15,6 @@ hassio_api: true
 hassio_role: admin
 auth_api: true
 ingress: true
-ingress_entry: /
-ingress_port: 5052
 map:
   - addon_config:rw
   - homeassistant_config:rw
