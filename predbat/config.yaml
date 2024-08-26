@@ -1,6 +1,6 @@
 ---
 name: predbat
-version: 1.1.22
+version: 1.1.23
 slug: predbat
 description: Home Battery Prediction and Control
 url: https://github.com/springfall2008/predbat_addon
@@ -21,8 +21,6 @@ map:
   - media:rw
   - share:rw
   - ssl
-ingress: true
-ingress_port: 5052
 ports:
   5052/tcp: 5052
 ports_description:
