@@ -22,7 +22,7 @@ WORKDIR /wkspace
 COPY rootfs /wkspace
 RUN wget https://codeload.github.com/springfall2008/batpred/zip/refs/heads/main -O main.zip
 RUN unzip main.zip
-RUN cp batpred-main/apps/predbat/predbat.py predbat.py 
+RUN cp batpred-main/apps/predbat/*py . 
 
 #COPY requirements.txt /tmp/
 #RUN pip3 install -r /tmp/requirements.txt
