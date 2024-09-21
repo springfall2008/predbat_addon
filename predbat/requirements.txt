@@ -3,3 +3,4 @@ requests
 pyyaml
 asyncio
 aiohttp==3.8.6
+Jinja2
