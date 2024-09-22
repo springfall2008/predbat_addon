@@ -1,6 +1,6 @@
 ---
-name: Predbat Iain
-version: 1.2.0
+name: Predbat
+version: 1.2.1
 slug: predbat
 description: Home Battery Prediction and Control
 url: https://github.com/springfall2008/predbat_addon
