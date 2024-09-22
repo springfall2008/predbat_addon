@@ -114,6 +114,10 @@ services:
         - /etc/localtime:/etc/localtime:ro
 ```
 
+## Upgrading from AppDaemon to Predbat add-on
+
+Step-by-step instructions to upgrade from running Predbat within AppDaemon or the AppDaemon-predbat add-on to using this Predbat add-on are included in the [Predbat installation instructions](https://springfall2008.github.io/batpred/install/#upgrading-from-appdaemon-to-predbat-add-on)
+
 ## Copyright
 
 ```text
