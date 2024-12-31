@@ -95,7 +95,7 @@ class Hass:
         log_size = self.logfile.tell()
         if log_size > 10000000:
             # check for existence of previous logfiles and rename each in turn
-            for num_logs in range(max_logs - 1, 1, -1):
+            for num_logs in range(max_logs - 1, 0, -1):
                 filename = "predbat." + format(num_logs) + ".log"
                 if os.path.isfile(filename):
                     newfile = "predbat." + format(num_logs + 1) + ".log"
