@@ -1,7 +1,6 @@
 #  Predbat Home Assistant Add-on
-Predbat Home Assistant Add-on
 
-This add-on can be used with Home Assistant to run Predbat without AppDaemon or even outside Home Assistant 
+This add-on can be used with Home Assistant to run Predbat without AppDaemon, or even outside Home Assistant
 
 ![image](https://github.com/springfall2008/predbat_addon/assets/48591903/50580da1-5110-4711-b740-1c14cc103835)
 
@@ -13,7 +12,7 @@ If you want to buy me a beer then please use Paypal - [tdlj@tdlj.net](mailto:tdl
 ## Installation as an add-on in Home Assistant
 
 * Go to settings, add-ons, add-on store, custom repositories
-* add 'https://github.com/springfall2008/predbat_addon' as a new reposityr
+* add 'https://github.com/springfall2008/predbat_addon' as a new repository
 
 ![image](https://github.com/springfall2008/predbat_addon/assets/48591903/7eb18076-888b-4ea5-844b-cfa93157b759)
 
@@ -21,7 +20,7 @@ If you want to buy me a beer then please use Paypal - [tdlj@tdlj.net](mailto:tdl
 * Scroll down and find Predbat, click on it and click 'Install'
 * Once installed you can click start, it will now download the latest Predbat and start it running
 * Predbat will error out as you have a Template configuration
-* Navigate to '/addon_configs/6adb4f0d_predbat' directory in Home Assistant file editor or via a Samba/SSH mount
+* Navigate to `/addon_configs/6adb4f0d_predbat` directory in Home Assistant file editor or via a Samba/SSH mount
 * Edit/replace the apps.yaml with the correct completed one as per Predbat documentation
 * Click restart on the add-on if need be (it might start automatically anyhow)
 
@@ -35,11 +34,11 @@ Predbat can be run on a seperate machine also, you will need a MacOS with Python
 
 * Download the files from rootfs directory (https://github.com/springfall2008/predbat_addon/tree/main/predbat/rootfs) into their own directory on your machine
 * Make sure your python environment has the dependancies required installed (https://github.com/springfall2008/predbat_addon/blob/main/predbat/requirements.txt)
-* Launch run.csh (you might want to make this startup from boot if you want to keep Predbat running). This will download Predbat for the first time and then fail.
+* Launch run.csh (you might want to make this startup from boot if you want to keep Predbat running). This will download Predbat for the first time and then fail
 * Edit apps.yaml (or copy your previous version from an old installs inside HA) as per the Predbat documentation
-* Add ha_url / ha_key settings into apps.yaml.
-  * The ha_url must be your Home Assistant machine e.g. http://homeassistant.local:8123
-  * The ha_key must be the persistant key you can generate in Home Assistant in your user/security section
+* Add `ha_url` / `ha_key` settings into apps.yaml
+  * The `ha_url` must be your Home Assistant machine e.g. `http://homeassistant.local:8123`
+  * The `ha_key` must be the persistant key you can generate in Home Assistant in your user/security section
 * Kill and re-start run.csh and it should run as normal. If you get errors about missing Python packages then install them. 
 
 ## Running from within Docker
@@ -47,10 +46,10 @@ Predbat can be run on a seperate machine also, you will need a MacOS with Python
 * Download the contents of 'https://github.com/springfall2008/predbat_addon/tree/main/predbat' onto your machine
 * You should see Dockerfile.standalone and rootfs directories
 * Download *.py from Predbat repo (https://github.com/springfall2008/batpred/blob/main/apps/predbat/predbat.py) and place the code into rootfs
-* Download apps.yaml from Predbat repo (https://github.com/springfall2008/batpred/blob/main/apps/predbat/config/apps.yaml), place it into rootfs and edit it as per the Predbat documentation.
-* Add ha_url / ha_key settings into apps.yaml.
-  * The ha_url must be your Home Assistant machine e.g. http://homeassistant.local:8123
-  * The ha_key must be the persistant key you can generate in Home Assistant in your user/security section
+* Download apps.yaml from Predbat repo (https://github.com/springfall2008/batpred/blob/main/apps/predbat/config/apps.yaml), place it into rootfs and edit it as per the Predbat documentation
+* Add `ha_url` / `ha_key` settings into apps.yaml.
+  * The `ha_url` must be your Home Assistant machine e.g. http://homeassistant.local:8123
+  * The `ha_key` must be the persistant key you can generate in Home Assistant in your user/security section
 
 * Build and run your docker as follows:
 
@@ -67,17 +66,17 @@ Credit to Nic for building this
 
 These are all prebuilt images that will support both amd64 & arm processors (so Raspberry PI, most NAS & PCs). They can be installed as either a fully enclosed container or a container with mounted external volumes and will populate the /config directory on creation and start-up. To do this I have a run.standalone.sh start-up file which does the file copy on first boot - I do not use the run.csh or run.sh start-up files from the add-on although they are pretty much the same as I wanted to standardise on one start-up file that supported all architectures.
 
-As mentioned the only issue I have is that with the template apps.yaml the logs throw lots of errors until a modified config file is added to the volume
+As mentioned the only issue I have is that with the template apps.yaml the logs throw lots of errors until a modified config file is added to the volume.
 
 ### Running
 
-Each image will run as a standalone Docker container using the following command
+Each image will run as a standalone Docker container using the following command:
 
 ```
 Docker run -d –-name predbat -v /etc/localtime:/etc/localtime nipar44/predbat_addon:tag – See below for tag descriptions
 ```
 
-The container logs will error until the apps.yaml template is completed, this can either be modified directly in the container or overwritten by copying an updated version to the container /config directory using ‘docker cp’
+The container logs will error until the apps.yaml template is completed, this can either be modified directly in the container or overwritten by copying an updated version to the container /config directory using ‘docker cp’.
 
 ### Tags
 
