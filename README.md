@@ -1,4 +1,4 @@
-#  Predbat Home Assistant Add-on
+#  Predbat Home Assistant Add-on (Docker)
 Predbat Home Assistant Add-on
 
 This add-on can be used with Home Assistant to run Predbat without AppDaemon
