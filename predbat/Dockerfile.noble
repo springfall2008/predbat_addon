@@ -1,10 +1,12 @@
 # Use the official Ubuntu image
 FROM ubuntu:latest
-ARG PREDBAT_VERSION="v8.8.20"
 ARG USER_NAME="predbat"
 ARG USER_GROUP="predbat"
 ARG UID="9005"
 ARG GID="9005"
+ARG PREDBAT_VERSION="v8.11.0"
+ARG BASE_IMAGE="ubuntu:latest"
+ARG BUILD_DATE
 # Set the working directory
 WORKDIR /addon
 
@@ -40,32 +42,21 @@ ADD --chown=${USER_NAME} https://github.com/springfall2008/batpred.git#$PREDBAT_
 # Make the startup script executable
 RUN chmod +x /addon/run.standalone.sh
 USER root
+
 # Define build arguments and labels
-ARG BUILD_ARCH
-ARG BUILD_DATE
-ARG BUILD_DESCRIPTION
-ARG BUILD_NAME
-ARG BUILD_REF
-ARG BUILD_REPOSITORY
-ARG BUILD_VERSION
 LABEL \
-    io.hass.name="${BUILD_NAME}" \
-    io.hass.description="${BUILD_DESCRIPTION}" \
-    io.hass.arch="${BUILD_ARCH}" \
     io.hass.type="addon" \
-    io.hass.version="${BUILD_VERSION}" \
-    maintainer="springfall2008 (https://github.com/springfall2008)" \
-    org.opencontainers.image.title="${BUILD_NAME}" \
-    org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
+    maintainer="nipar4 (https://github.com/nipar4/predbat_addon)" \
     org.opencontainers.image.vendor="Springfall2008" \
-    org.opencontainers.image.authors="springfall2008 (https://github.com/springfall2008)" \
+    org.opencontainers.image.authors="springfall2008, nipar4" \
     org.opencontainers.image.licenses="MIT" \
-    org.opencontainers.image.url="https://github.com/springfall2008" \
-    org.opencontainers.image.source="https://github.com/${BUILD_REPOSITORY}" \
-    org.opencontainers.image.documentation="https://github.com/${BUILD_REPOSITORY}/blob/main/README.md" \
+    org.opencontainers.image.url="https://github.com/springfall2008, https://github.com/nipar4/predbat_addon" \
+    org.opencontainers.image.source="https://github.com/nipar4/predbat_addon" \
+    org.opencontainers.image.documentation="https://github.com/springfall2008/predbat_addon/blob/main/predbat/DOCS.md" \
     org.opencontainers.image.created=${BUILD_DATE} \
-    org.opencontainers.image.revision=${BUILD_REF} \
-    org.opencontainers.image.version=${BUILD_VERSION}
+    org.opencontainers.image.title="Predbat Addon Docker version" \
+    org.opencontainers.image.base.digest=${BASE_IMAGE} \
+    org.opencontainers.image.version=${PREDBAT_VERSION}
 
 # Set the entrypoint to the startup script
 ENTRYPOINT [ "sh", "/addon/run.standalone.sh"]
