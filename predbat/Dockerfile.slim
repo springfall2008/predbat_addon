@@ -1,5 +1,6 @@
+ARG BASE_IMAGE="python:3.13-slim-bookworm"
 # Use the official lightweight Python base image
-FROM python:3.13-slim-bookworm AS builder
+FROM ${BASE_IMAGE} AS builder
 
 # Set the working directory
 
@@ -19,13 +20,13 @@ rm -rf /var/lib/apt/lists/* /requirements.txt
 EOF
 
 # Final stage
-FROM python:3.13-slim-bookworm
+FROM ${BASE_IMAGE}
 ARG USER_NAME="predbat"
 ARG USER_GROUP="predbat"
 ARG UID="9005"
 ARG GID="9005"
 ARG PREDBAT_VERSION="v8.11.0"
-ARG BASE_IMAGE="python:3.13-slim-bookworm"
+ARG BASE_IMAGE
 ARG BUILD_DATE
 # Set the working directory
 WORKDIR /config
