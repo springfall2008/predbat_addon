@@ -19,7 +19,7 @@ The following options are available:
 
 - Modifications are limited to the run and startup scripts, which serve as a transport mechanism for running the Predbat application.  
 - The core application files remain unaltered.  
-- Any Predbat-related issues should be reported in the [Predbat GitHub repository](#).
+- Any Predbat-related issues should be reported in the [[Predbat GitHub repository](https://github.com/springfall2008/batpred)].
 
 ---
 
