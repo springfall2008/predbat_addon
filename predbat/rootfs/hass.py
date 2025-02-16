@@ -158,6 +158,7 @@ class Hass:
         self.run_list = []
         self.threads = []
         self.fatal_error = False
+        #self.hass_api_version = 2
 
         self.logfile = open("predbat.log", "a")
 
