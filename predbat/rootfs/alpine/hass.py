@@ -80,6 +80,10 @@ async def main():
             print("Stopping Predbat due to file changes....")
             await p_han.stop_all()
             break
+        if p_han.fatal_error:
+            print("Stopping Predbat due to fatal error....")
+            await p_han.stop_all()
+            break
 
 
 if __name__ == "__main__":
@@ -164,6 +168,8 @@ class Hass:
         self.args = {}
         self.run_list = []
         self.threads = []
+        self.fatal_error = False
+        self.hass_api_version = 2
 
         self.logfile = open("predbat.log", "a")
 
