@@ -16,7 +16,7 @@ COPY rootfs /
 # COPY ingress.conf /etc/nginx/http.d/
 
 COPY requirements.txt /tmp/
-RUN pip install -r /tmp/requirements.txt
+RUN pip install --break-system-packages -r /tmp/requirements.txt
 
 # Start app
 RUN chmod a+x /run.sh
