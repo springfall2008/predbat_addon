@@ -174,8 +174,9 @@ class Hass:
         self.logfile = open("predbat.log", "a")
 
         # Open YAML file apps.yaml and read it
-        self.log("Loading apps.yaml", quiet=False)
-        with io.open("apps.yaml", "r") as stream:
+        apps_file = os.getenv("PREDBAT_APPS_FILE", "apps.yaml")
+        self.log(f"Loading {apps_file}", quiet=False)
+        with io.open(apps_file, "r") as stream:
             try:
                 config = yaml.safe_load(stream)
                 self.args = config["pred_bat"]
