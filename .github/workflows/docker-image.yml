@@ -1,19 +1,27 @@
 name: Build and Push Multiple Docker Images
 
 on:
-  workflow_dispatch:
+  push:
+    paths:
+      - 'predbat_version.txt'   # Trigger only when this file changes
 
 jobs:
   build-multi-images:
     runs-on: ubuntu-latest
 
     env:
-      VERSION: v8.18.0
+      # replaced with verion file VERSION: v8.18.0
       USER: ${{ secrets.DOCKERHUB_USERNAME }}
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Read version
+      id: predbat_version
+      run: |
+        PREDBAT_VERSION=$(cat predbat_version.txt)
+        echo "PREDBAT_VERSION=$PREDBAT_VERSION" >> $GITHUB_ENV
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -31,10 +39,11 @@ jobs:
       run: |
         docker buildx build \
           --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+          --build-arg PREDBAT_VERSION=${{ env.PREDBAT_VERSION }} \
           --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8 \
           --file ./predbat/Dockerfile.noble \
           --tag $USER/predbat_addon:latest \
-          --tag $USER/predbat_addon:${VERSION} \
+          --tag $USER/predbat_addon:${PREDBAT_VERSION} \
           --cache-from=type=local,src=/tmp/.buildx-cache-noble \
           --cache-to=type=local,dest=/tmp/.buildx-cache-noble \
           --push \
@@ -44,10 +53,11 @@ jobs:
       run: |
         docker buildx build \
           --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+          --build-arg PREDBAT_VERSION=${{ env.PREDBAT_VERSION }} \
           --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8 \
           --file ./predbat/Dockerfile.alpine \
           --tag $USER/predbat_addon:alpine-latest \
-          --tag $USER/predbat_addon:alpine-${VERSION} \
+          --tag $USER/predbat_addon:alpine-${PREDBAT_VERSION} \
           --cache-from=type=local,src=/tmp/.buildx-cache-alpine \
           --cache-to=type=local,dest=/tmp/.buildx-cache-alpine \
           --push \
@@ -57,10 +67,11 @@ jobs:
       run: |
         docker buildx build \
           --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+          --build-arg PREDBAT_VERSION=${{ env.PREDBAT_VERSION }} \
           --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8 \
           --file ./predbat/Dockerfile.slim \
           --tag $USER/predbat_addon:slim-latest \
-          --tag $USER/predbat_addon:slim-${VERSION} \
+          --tag $USER/predbat_addon:slim-${PREDBAT_VERSION} \
           --cache-from=type=local,src=/tmp/.buildx-cache-slim \
           --cache-to=type=local,dest=/tmp/.buildx-cache-slim \
           --push \
