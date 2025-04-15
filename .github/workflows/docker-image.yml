@@ -1,0 +1,67 @@
+name: Build and Push Multiple Docker Images
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-multi-images:
+    runs-on: ubuntu-latest
+
+    env:
+      VERSION: v8.18.0
+      USER: ${{ secrets.DOCKERHUB_USERNAME }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Create local cache folders
+      run: |
+        mkdir -p /tmp/.buildx-cache-noble
+        mkdir -p /tmp/.buildx-cache-alpine
+        mkdir -p /tmp/.buildx-cache-slim
+
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+    - name: Build and push Noble image
+      run: |
+        docker buildx build \
+          --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+          --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8 \
+          --file ./predbat/Dockerfile.noble \
+          --tag $USER/predbat_addon:latest \
+          --tag $USER/predbat_addon:${VERSION} \
+          --cache-from=type=local,src=/tmp/.buildx-cache-noble \
+          --cache-to=type=local,dest=/tmp/.buildx-cache-noble \
+          --push \
+          ./predbat/
+
+    - name: Build and push alpine image
+      run: |
+        docker buildx build \
+          --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+          --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8 \
+          --file ./predbat/Dockerfile.alpine \
+          --tag $USER/predbat_addon:alpine-latest \
+          --tag $USER/predbat_addon:alpine-${VERSION} \
+          --cache-from=type=local,src=/tmp/.buildx-cache-alpine \
+          --cache-to=type=local,dest=/tmp/.buildx-cache-alpine \
+          --push \
+          ./predbat/
+
+    - name: Build and push slim image
+      run: |
+        docker buildx build \
+          --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+          --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8 \
+          --file ./predbat/Dockerfile.slim \
+          --tag $USER/predbat_addon:slim-latest \
+          --tag $USER/predbat_addon:slim-${VERSION} \
+          --cache-from=type=local,src=/tmp/.buildx-cache-slim \
+          --cache-to=type=local,dest=/tmp/.buildx-cache-slim \
+          --push \
+          ./predbat/
