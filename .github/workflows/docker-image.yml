@@ -83,4 +83,4 @@ jobs:
         tag_name: ${{ env.PREDBAT_VERSION }}
         name: Script-based Build ${{ env.PREDBAT_VERSION }}
         body: |
-          🔧 Built with external predbat version `${{ env.PREDBAT_VERSION }}`
+          🔧 Built with predbat version `${{ env.PREDBAT_VERSION }}`
