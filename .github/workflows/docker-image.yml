@@ -76,3 +76,11 @@ jobs:
           --cache-to=type=local,dest=/tmp/.buildx-cache-slim \
           --push \
           ./predbat/
+          
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ env.PREDBAT_VERSION }}
+        name: Script-based Build ${{ env.PREDBAT_VERSION }}
+        body: |
+          🔧 Built with external predbat version `${{ env.PREDBAT_VERSION }}`
