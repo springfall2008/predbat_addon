@@ -46,7 +46,8 @@ jobs:
           --tag $USER/predbat_addon:${PREDBAT_VERSION} \
           --cache-from=type=local,src=/tmp/.buildx-cache-noble \
           --cache-to=type=local,dest=/tmp/.buildx-cache-noble \
-          --push \
+          --load \
+          #--push \
           ./predbat/
 
     - name: Build and push alpine image
@@ -60,7 +61,8 @@ jobs:
           --tag $USER/predbat_addon:alpine-${PREDBAT_VERSION} \
           --cache-from=type=local,src=/tmp/.buildx-cache-alpine \
           --cache-to=type=local,dest=/tmp/.buildx-cache-alpine \
-          --push \
+          #--push \
+          --load \
           ./predbat/
 
     - name: Build and push slim image
@@ -74,5 +76,6 @@ jobs:
           --tag $USER/predbat_addon:slim-${PREDBAT_VERSION} \
           --cache-from=type=local,src=/tmp/.buildx-cache-slim \
           --cache-to=type=local,dest=/tmp/.buildx-cache-slim \
-          --push \
+          #--push \
+          --load \
           ./predbat/
