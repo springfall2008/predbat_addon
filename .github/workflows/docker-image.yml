@@ -40,14 +40,13 @@ jobs:
         docker buildx build \
           --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
           --build-arg PREDBAT_VERSION=$PREDBAT_VERSION \
-          #--platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8 \
+          --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8 \
           --file ./predbat/Dockerfile.noble \
           --tag $USER/predbat_addon:latest \
           --tag $USER/predbat_addon:${PREDBAT_VERSION} \
           --cache-from=type=local,src=/tmp/.buildx-cache-noble \
           --cache-to=type=local,dest=/tmp/.buildx-cache-noble \
-          --load \
-          #--push \
+          --push \
           ./predbat/
 
     - name: Build and push alpine image
