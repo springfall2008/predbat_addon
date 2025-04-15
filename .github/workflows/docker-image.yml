@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      VERSION: 8.18.0
+      VERSION: v8.18.0
       USER: ${{ secrets.DOCKERHUB_USERNAME }}
 
     steps:
