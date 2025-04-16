@@ -4,7 +4,7 @@ ARG USER_NAME="predbat"
 ARG USER_GROUP="predbat"
 ARG UID="9005"
 ARG GID="9005"
-ARG PREDBAT_VERSION="v8.18.0"
+ARG PREDBAT_VERSION="v8.18.2"
 ARG BASE_IMAGE="ubuntu:latest"
 ARG BUILD_DATE
 # Set the working directory
