@@ -37,8 +37,7 @@ RUN groupadd -g ${GID} ${USER_GROUP} \
 # Copy the rootfs directory to /addon
 ADD --chown=${USER_NAME} https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/ https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/config/ rootfs/noble/* /addon/
 #ADD https://github.com/springfall2008/batpred.git#main:apps/predbat/ https://github.com/springfall2008/batpred.git#main:apps/predbat/config/ rootfs/noble/* /addon/
-#COPY rootfs/apps/*.py rootfs/apps.yaml rootfs/noble/* /addon/
-
+#COPY --chown=${USER_NAME} ha.py /addon
 # Make the startup script executable
 RUN chmod +x /addon/run.standalone.sh
 USER root
