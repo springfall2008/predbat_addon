@@ -1,3 +1,4 @@
+$schema: https://json.schemastore.org/github-workflow.json
 name: Build and Push Multiple Docker Images
 
 on:
