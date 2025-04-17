@@ -81,6 +81,6 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ env.PREDBAT_VERSION }}
-        name: Prebat Version ${{ env.PREDBAT_VERSION }}
+        name: Based on Prebat Version ${{ env.PREDBAT_VERSION }}
         body: |
           🔧 Built with predbat version `${{ env.PREDBAT_VERSION }}`
