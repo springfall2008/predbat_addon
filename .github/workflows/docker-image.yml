@@ -1,4 +1,3 @@
-$schema: https://json.schemastore.org/github-workflow.json
 name: Build and Push Multiple Docker Images
 
 on:
@@ -15,73 +14,73 @@ jobs:
       USER: ${{ secrets.DOCKERHUB_USERNAME }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Read version
-      id: predbat_version
-      run: |
-        PREDBAT_VERSION=$(cat predbat_version.txt)
-        echo "PREDBAT_VERSION=$PREDBAT_VERSION" >> $GITHUB_ENV
+      - name: Read version
+        id: predbat_version
+        run: |
+          PREDBAT_VERSION=$(cat predbat_version.txt)
+          echo "PREDBAT_VERSION=$PREDBAT_VERSION" >> $GITHUB_ENV
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: Create local cache folders
-      run: |
-        mkdir -p /tmp/.buildx-cache-noble
-        mkdir -p /tmp/.buildx-cache-alpine
-        mkdir -p /tmp/.buildx-cache-slim
+      - name: Create local cache folders
+        run: |
+          mkdir -p /tmp/.buildx-cache-noble
+          mkdir -p /tmp/.buildx-cache-alpine
+          mkdir -p /tmp/.buildx-cache-slim
 
-    - name: Log in to Docker Hub
-      run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-    - name: Build and push Noble image
-      run: |
-        docker buildx build \
-          --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-          --build-arg PREDBAT_VERSION=$PREDBAT_VERSION \
-          --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8 \
-          --file ./predbat/Dockerfile.noble \
-          --tag $USER/predbat_addon:latest \
-          --tag $USER/predbat_addon:${PREDBAT_VERSION} \
-          --cache-from=type=local,src=/tmp/.buildx-cache-noble \
-          --cache-to=type=local,dest=/tmp/.buildx-cache-noble \
-          --push \
-          ./predbat/
+      - name: Build and push Noble image
+        run: |
+          docker buildx build \
+            --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --build-arg PREDBAT_VERSION=$PREDBAT_VERSION \
+            --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8 \
+            --file ./predbat/Dockerfile.noble \
+            --tag $USER/predbat_addon:latest \
+            --tag $USER/predbat_addon:${PREDBAT_VERSION} \
+            --cache-from=type=local,src=/tmp/.buildx-cache-noble \
+            --cache-to=type=local,dest=/tmp/.buildx-cache-noble \
+            --push \
+            ./predbat/
 
-    - name: Build and push alpine image
-      run: |
-        docker buildx build \
-          --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-          --build-arg PREDBAT_VERSION=$PREDBAT_VERSION \
-          --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8 \
-          --file ./predbat/Dockerfile.alpine \
-          --tag $USER/predbat_addon:alpine-latest \
-          --tag $USER/predbat_addon:alpine-${PREDBAT_VERSION} \
-          --cache-from=type=local,src=/tmp/.buildx-cache-alpine \
-          --cache-to=type=local,dest=/tmp/.buildx-cache-alpine \
-          --push \
-          ./predbat/
+      - name: Build and push alpine image
+        run: |
+          docker buildx build \
+            --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --build-arg PREDBAT_VERSION=$PREDBAT_VERSION \
+            --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8 \
+            --file ./predbat/Dockerfile.alpine \
+            --tag $USER/predbat_addon:alpine-latest \
+            --tag $USER/predbat_addon:alpine-${PREDBAT_VERSION} \
+            --cache-from=type=local,src=/tmp/.buildx-cache-alpine \
+            --cache-to=type=local,dest=/tmp/.buildx-cache-alpine \
+            --push \
+            ./predbat/
 
-    - name: Build and push slim image
-      run: |
-        docker buildx build \
-          --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-          --build-arg PREDBAT_VERSION=$PREDBAT_VERSION \
-          --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8 \
-          --file ./predbat/Dockerfile.slim \
-          --tag $USER/predbat_addon:slim-latest \
-          --tag $USER/predbat_addon:slim-${PREDBAT_VERSION} \
-          --cache-from=type=local,src=/tmp/.buildx-cache-slim \
-          --cache-to=type=local,dest=/tmp/.buildx-cache-slim \
-          --push \
-          ./predbat/
-          
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: ${{ env.PREDBAT_VERSION }}
-        name: Based on Prebat Version ${{ env.PREDBAT_VERSION }}
-        body: |
-          🔧 Built with predbat version `${{ env.PREDBAT_VERSION }}`
+      - name: Build and push slim image
+        run: |
+          docker buildx build \
+            --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --build-arg PREDBAT_VERSION=$PREDBAT_VERSION \
+            --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8 \
+            --file ./predbat/Dockerfile.slim \
+            --tag $USER/predbat_addon:slim-latest \
+            --tag $USER/predbat_addon:slim-${PREDBAT_VERSION} \
+            --cache-from=type=local,src=/tmp/.buildx-cache-slim \
+            --cache-to=type=local,dest=/tmp/.buildx-cache-slim \
+            --push \
+            ./predbat/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.PREDBAT_VERSION }}
+          name: Based on Prebat Version ${{ env.PREDBAT_VERSION }}
+          body: |
+            🔧 Built with predbat version `${{ env.PREDBAT_VERSION }}`
