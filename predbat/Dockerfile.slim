@@ -42,8 +42,8 @@ USER root
 COPY --from=builder /install /usr/local/
 
 # Copy required files including requirements file and install build dependencies
-ADD https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/ https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/config/ rootfs/alpine/* /addon/
-
+ADD --chown=${USER_NAME} https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/ https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/config/ rootfs/alpine/* /addon/
+RUN chmod +x /addon/run.standalone.sh
 USER root
 # Define build arguments and labels
 
