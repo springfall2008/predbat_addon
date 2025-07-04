@@ -4,3 +4,4 @@ pyyaml
 asyncio
 aiohttp
 Jinja2
+ruamel.yaml
