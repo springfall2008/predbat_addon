@@ -1,0 +1,58 @@
+ARG BASE_IMAGE="11notes/python:3.13.3"
+# Use the official lightweight Python base image
+FROM ${BASE_IMAGE} AS builder
+# Set the working directory
+USER root
+WORKDIR /install
+
+# Install gcc and build python requirements && remove all cached and uneeded files/packages
+COPY requirements.txt /
+RUN <<EOF
+apk add --no-cache --virtual .build-deps gcc g++ libffi-dev musl-dev
+pip install --no-cache-dir --prefix=/install -r /requirements.txt
+apk del .build-deps
+echo "Cleaning Up"
+rm -rf /var/cache/apk/* /requirements.txt
+EOF
+#RUN find /usr /install -type d -name "__pycache__" -exec sh -c 'echo "Deleting: {}"; rm -rf {}' \;
+
+# Final stage
+FROM ${BASE_IMAGE}
+ARG USER_NAME="predbat"
+ARG USER_GROUP="predbat"
+ARG UID="9005"
+ARG GID="9005"
+ARG PREDBAT_VERSION
+ARG BASE_IMAGE
+ARG BUILD_DATE
+# Set the working directory
+WORKDIR /config
+USER root
+RUN addgroup -g ${GID} ${USER_GROUP} \
+    && adduser -D -u ${UID} -G ${USER_GROUP} ${USER_NAME} \
+    && chown -R ${USER_NAME} /config
+
+COPY --from=builder /install /usr/local/
+# Copy only the necessary files from github
+ADD --chown=${USER_NAME} https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/ https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/config/ rootfs/alpine/* /addon/
+RUN chmod +x /addon/run.standalone.sh
+USER root
+
+# Define build arguments and labels
+LABEL \
+    io.hass.type="addon" \
+    addon.version="1.2.9" \
+    maintainer="nipar4 (https://github.com/nipar4/predbat_addon)" \
+    org.opencontainers.image.vendor="Springfall2008" \
+    org.opencontainers.image.authors="springfall2008, nipar4" \
+    org.opencontainers.image.licenses="MIT" \
+    org.opencontainers.image.url="https://github.com/springfall2008, https://github.com/nipar4/predbat_addon" \
+    org.opencontainers.image.source="https://github.com/nipar4/predbat_addon" \
+    org.opencontainers.image.documentation="https://github.com/springfall2008/predbat_addon/blob/main/predbat/DOCS.md" \
+    org.opencontainers.image.created=${BUILD_DATE} \
+    org.opencontainers.image.title="Predbat Addon Docker version" \
+    org.opencontainers.image.base.digest=${BASE_IMAGE} \
+    org.opencontainers.image.version=${PREDBAT_VERSION}
+
+# Set the entrypoint to the startup script
+ENTRYPOINT ["sh", "/addon/run.standalone.sh"]
