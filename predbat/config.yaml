@@ -1,6 +1,6 @@
 ---
 name: Predbat
-version: 1.3.0
+version: 1.3.1
 slug: predbat
 description: Home Battery Prediction and Control
 url: https://github.com/springfall2008/predbat_addon
@@ -8,6 +8,8 @@ codenotary: tdlj@tdlj.net
 ingress: True
 ingress_port: 5052
 ingress_root: "/"
+ports:
+  8199/tcp: 8199
 arch:
   - aarch64
   - amd64
