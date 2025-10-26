@@ -8,6 +8,8 @@ codenotary: tdlj@tdlj.net
 ingress: True
 ingress_port: 5052
 ingress_root: "/"
+ports:
+  8199/tcp: 8199
 arch:
   - aarch64
   - amd64
