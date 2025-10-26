@@ -37,7 +37,7 @@ USER root
 # Define build arguments and labels
 LABEL \
     io.hass.type="addon" \
-    addon.version="1.2.9" \
+    addon.version="1.3.1" \
     maintainer="nipar4 (https://github.com/nipar4/predbat_addon)" \
     org.opencontainers.image.vendor="Springfall2008" \
     org.opencontainers.image.authors="springfall2008, nipar4" \
