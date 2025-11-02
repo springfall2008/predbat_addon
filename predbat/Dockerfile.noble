@@ -15,7 +15,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 COPY requirements.txt /
 RUN apt-get update && apt-get upgrade -y && \
     apt-get dist-upgrade -y && \
-    apt-get update && apt-get install -y --no-install-recommends python3-minimal && \
+    apt-get update && apt-get install -y --no-install-recommends python3-minimal libffi-dev && \
     apt-get install -y python3-pip && \
     pip install --break-system-packages -r /requirements.txt && \
     apt-get clean && \
