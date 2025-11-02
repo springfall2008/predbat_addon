@@ -10,6 +10,7 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get dist-upgrade -y
 #RUN apt-get install -y python3
 RUN apt-get update && apt-get install -y --no-install-recommends python3-minimal 
+# Added libffi-dev to resolve cffi dependancy errors
 RUN apt-get install -y python3-pip libffi-dev
 
 WORKDIR /app_data
