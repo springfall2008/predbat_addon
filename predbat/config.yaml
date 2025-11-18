@@ -2,44 +2,34 @@
 name: Predbat
 slug: predbat
 version: 1.3.2
-description: "Home Battery Prediction and Control"
-url: "https://github.com/nipar4/predbat_addon"
-codenotary: "tdlj@tdlj.net"
-
-image: "nipar44/predbat_addon:1.3.2"
-
+description: Home Battery Prediction and Control
+url: https://github.com/nipar4/predbat_addon
+codenotary: tdlj@tdlj.net
+image: nipar44/predbat_addon:1.3.2
 ingress: true
 ingress_port: 5052
 ingress_root: "/"
-
 ports:
   8199/tcp: 8199
-
 arch:
   - aarch64
   - amd64
   - armv7
-
 init: false
 startup: services
 boot: auto
-
 homeassistant_api: true
 hassio_api: true
 hassio_role: admin
 auth_api: true
-
 map:
   - addon_config:rw
   - homeassistant_config:rw
   - media:rw
   - share:rw
   - ssl
-
 options:
-  log_level: "info"
   dummy: []
-
 schema:
   log_level: list(trace|debug|info|notice|warning|error|fatal)?
   dummy:
