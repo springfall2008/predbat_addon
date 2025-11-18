@@ -1,7 +1,7 @@
 ---
 name: Predbat
 slug: predbat
-version: "1.3.2"
+version: 1.3.2
 description: "Home Battery Prediction and Control"
 url: "https://github.com/nipar4/predbat_addon"
 codenotary: "tdlj@tdlj.net"
