@@ -1,4 +1,4 @@
 # https://developers.home-assistant.io/docs/add-ons/repository#repository-configuration
 name: Predbat add-on
-url: 'https://github.com/springfall2008/predbat_addon'
+url: 'https://github.com/nipar4/predbat_addon'
 maintainer: Trefor Southwell <tdlj@tdlj.net>
