@@ -5,7 +5,7 @@ version: 1.3.2
 description: Home Battery Prediction and Control
 url: https://github.com/nipar4/predbat_addon
 codenotary: tdlj@tdlj.net
-image: docker.io/nipar44/predbat_addon:1.3.2
+image: nipar44/predbat_addon:{arch}-1.3.2
 ingress: true
 ingress_port: 5052
 ingress_root: "/"
