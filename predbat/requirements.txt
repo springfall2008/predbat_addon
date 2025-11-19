@@ -5,5 +5,4 @@ asyncio
 aiohttp
 Jinja2
 ruamel.yaml
-mcp
 pyjwt
