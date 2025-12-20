@@ -7,6 +7,7 @@ FROM $BUILD_FROM
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Install Python and pip in a single layer
+# Using python3 instead of python3-minimal for better pip package compatibility
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
