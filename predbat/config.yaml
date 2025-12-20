@@ -1,5 +1,6 @@
 ---
 name: Predbat
+version: 1.4.0
 slug: predbat
 version: 1.3.2
 description: Home Battery Prediction and Control
