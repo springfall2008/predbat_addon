@@ -1,8 +1,7 @@
-ARG BASE_IMAGE="11notes/python:3.13.3"
+ARG BASE_IMAGE="python:3.13-alpine"
 # Use the official lightweight Python base image
 FROM ${BASE_IMAGE} AS builder
 # Set the working directory
-USER root
 WORKDIR /install
 
 # Install gcc and build python requirements && remove all cached and uneeded files/packages
@@ -32,13 +31,31 @@ RUN addgroup -g ${GID} ${USER_GROUP} \
     && adduser -D -u ${UID} -G ${USER_GROUP} ${USER_NAME} \
     && chown -R ${USER_NAME} /config
 
+# ----------------------------
+# Install s6-overlay v3
+# ----------------------------
+ARG S6_VERSION=v3.1.6.2
+RUN apk add --no-cache curl xz \
+ && curl -fsSL https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-noarch.tar.xz \
+    | tar -C / -Jxpf - \
+ && curl -fsSL https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-$(uname -m).tar.xz \
+    | tar -C / -Jxpf - \
+ && apk del curl xz
+
+# ----------------------------
+# Copy Python deps from builder
+# ----------------------------
 COPY --from=builder /install /usr/local/
 # Copy only the necessary files from github
 ADD --chown=${USER_NAME} https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/ https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/config/ rootfs/alpine/* /addon/
 RUN chmod +x /addon/run.standalone.sh
-USER root
 
-# Define build arguments and labels
+# ----------------------------
+# Copy s6 service definition
+# ----------------------------
+COPY rootfs/docker/s6-rc/ /etc/s6-overlay/s6-rc.d/
+
+
 LABEL \
     io.hass.type="addon" \
     addon.version="1.3.2" \
@@ -54,5 +71,7 @@ LABEL \
     org.opencontainers.image.base.digest=${BASE_IMAGE} \
     org.opencontainers.image.version=${PREDBAT_VERSION}
 
-# Set the entrypoint to the startup script
-ENTRYPOINT ["sh", "/addon/run.standalone.sh"]
+# ----------------------------
+# s6 becomes PID 1
+# ----------------------------
+ENTRYPOINT ["/init"]

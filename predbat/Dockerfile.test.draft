@@ -1,0 +1,83 @@
+# ----------------------------
+# Base image and builder
+# ----------------------------
+ARG BASE_IMAGE="python:3.13-alpine"
+FROM ${BASE_IMAGE} AS builder
+WORKDIR /install
+
+# Install build dependencies and Python requirements
+COPY requirements.txt /
+RUN <<EOF
+apk add --no-cache --virtual .build-deps gcc g++ libffi-dev musl-dev
+pip install --no-cache-dir --prefix=/install -r /requirements.txt
+apk del .build-deps
+rm -rf /var/cache/apk/* /requirements.txt
+EOF
+
+# ----------------------------
+# Runtime image
+# ----------------------------
+FROM ${BASE_IMAGE}
+
+# Arguments for user and versioning
+ARG USER_NAME="predbat"
+ARG USER_GROUP="predbat"
+ARG UID="9005"
+ARG GID="9005"
+ARG PREDBAT_VERSION
+ARG BUILD_DATE
+
+# Set working directory
+WORKDIR /config
+USER root
+
+# Create user/group and set permissions
+RUN addgroup -g ${GID} ${USER_GROUP} \
+ && adduser -D -u ${UID} -G ${USER_GROUP} ${USER_NAME} \
+ && chown -R ${USER_NAME} /config
+
+# ----------------------------
+# Install s6-overlay v3
+# ----------------------------
+ARG S6_VERSION=v3.1.6.2
+RUN apk add --no-cache curl xz \
+ && curl -fsSL https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-noarch.tar.xz \
+    | tar -C / -Jxpf - \
+ && curl -fsSL https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-$(uname -m).tar.xz \
+    | tar -C / -Jxpf - \
+ && apk del curl xz
+
+# ----------------------------
+# Copy Python deps from builder
+# ----------------------------
+COPY --from=builder /install /usr/local/
+
+# ----------------------------
+# Add application files
+# ----------------------------
+ADD --chown=${USER_NAME} \
+  https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/ \
+  https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/config/ \
+  rootfs/alpine/* \
+  /addon/
+
+# Ensure main script is executable
+RUN chmod +x /addon/run.standalone.sh
+
+# ----------------------------
+# Copy s6 service definition
+# ----------------------------
+COPY rootfs/docker/s6-rc/ /etc/s6-overlay/s6-rc.d/
+
+# ----------------------------
+# Labels
+# ----------------------------
+LABEL \
+  org.opencontainers.image.created=${BUILD_DATE} \
+  org.opencontainers.image.title="Predbat (Docker, s6-overlay)" \
+  io.hass.type="addon"   # optional, for future HA add-on
+
+# ----------------------------
+# s6 becomes PID 1
+# ----------------------------
+ENTRYPOINT ["/init"]

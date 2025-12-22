@@ -13,12 +13,23 @@ FROM ghcr.io/hassio-addons/ubuntu-base:10.0.5
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
+<<<<<<< HEAD
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get dist-upgrade -y
 #RUN apt-get install -y python3
 RUN apt-get update && apt-get install -y --no-install-recommends python3-minimal 
 # Added libffi-dev to resolve cffi dependancy errors
 RUN apt-get install -y python3-pip libffi-dev
+=======
+# Install Python and pip in a single layer
+# Using python3 instead of python3-minimal for better pip package compatibility
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
+        python3 \
+        python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+>>>>>>> upstream/main
 
 WORKDIR /app_data
 COPY rootfs /
