@@ -1,4 +1,4 @@
-#!/usr/bin/execlineb -P
+#!/command/execlineb -P
 with-contenv
 s6-setuidgid predbat
-/addon/run.standalone.sh
+/addon/run.docker.sh

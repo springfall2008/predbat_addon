@@ -27,7 +27,7 @@ ARG BUILD_DATE
 # Set the working directory
 WORKDIR /config
 USER root
-RUN addgroup -g ${GID} ${USER_GROUP} \
+RUN addgroup -S -g ${GID} ${USER_GROUP} \
     && adduser -D -u ${UID} -G ${USER_GROUP} ${USER_NAME} \
     && chown -R ${USER_NAME} /config
 
