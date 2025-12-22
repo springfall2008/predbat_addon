@@ -11,8 +11,10 @@ If you want to buy me a beer then please use Paypal - [tdlj@tdlj.net](mailto:tdl
 
 ## Installation as an add-on in Home Assistant
 
+[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fspringfall2008%2Fpredbat_addon)
+
 * Go to settings, add-ons, add-on store, custom repositories
-* add 'https://github.com/springfall2008/predbat_addon' as a new repository
+* Add 'https://github.com/springfall2008/predbat_addon' as a new repository
 
 ![image](https://github.com/springfall2008/predbat_addon/assets/48591903/7eb18076-888b-4ea5-844b-cfa93157b759)
 
