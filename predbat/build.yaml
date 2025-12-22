@@ -1,10 +1,10 @@
 ---
 build_from:
   amd64: "ghcr.io/hassio-addons/ubuntu-base/amd64:10.0.5"
-  aarch64: "ghcr.io/hassio-addons/ubuntu-base:10.0.5"
-  armhf: "ghcr.io/hassio-addons/ubuntu-base:10.0.5"
-  armv7: "ghcr.io/hassio-addons/ubuntu-base:10.0.5"
-  i386: "ghcr.io/hassio-addons/ubuntu-base:10.0.5"
+  aarch64: "ghcr.io/hassio-addons/ubuntu-base/aarch64:10.0.5"
+  armhf: "ghcr.io/hassio-addons/ubuntu-base/armhf:10.0.5"
+  armv7: "ghcr.io/hassio-addons/ubuntu-base/armv7:10.0.5"
+  i386: "ghcr.io/hassio-addons/ubuntu-base/i386:10.0.5"
 codenotary:
   base_image: tdlj@tdlj.net
   signer: tdlj@tdlj.net
