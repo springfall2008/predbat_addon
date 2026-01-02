@@ -3,5 +3,5 @@ requests
 pyyaml
 aiohttp
 Jinja2
-ruamel.yaml
+ruamel.yaml==0.18.17
 pyjwt
