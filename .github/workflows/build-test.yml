@@ -31,6 +31,6 @@ jobs:
           context: .
           file: ./predbat/Dockerfile.test
           push: true
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64
           tags: |
             ${{ env.DOCKER_USER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
