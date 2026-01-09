@@ -75,7 +75,7 @@ RUN . /tmp/s6_arch.env \
 COPY --from=builder /install /usr/local/
 # Copy only the necessary files from github
 ADD --chown=${USER_NAME} https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/ https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/config/ rootfs/alpine/* /addon/
-RUN chmod +x /addon/run.standalone.sh
+#RUN chmod +x /addon/run.standalone.sh
 
 # ----------------------------
 # Copy s6 service definition
