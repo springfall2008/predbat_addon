@@ -33,41 +33,24 @@ RUN addgroup -S -g ${GID} ${USER_GROUP} \
     && chown -R ${USER_NAME} /config
 
 # ----------------------------
-# s6-overlay Architecture
+# Map TARGETARCH → s6 overlay architecture
 # ----------------------------
-ARG S6_VERSION="v3.1.6.2"
-ARG TARGETARCH
-
-# Map Docker arch → s6 arch (static, build-time safe)
-ARG S6_ARCH_AMD64="x86_64"
-ARG S6_ARCH_ARM64="aarch64"
-ARG S6_ARCH_ARM="arm"
-
-# Select s6 arch based on TARGETARCH
-ARG S6_ARCH
-RUN case "${TARGETARCH}" in \
-      amd64)  echo "S6_ARCH=${S6_ARCH_AMD64}" ;; \
-      arm64)  echo "S6_ARCH=${S6_ARCH_ARM64}" ;; \
-      arm)    echo "S6_ARCH=${S6_ARCH_ARM}" ;; \
-      *) echo "Unsupported architecture ${TARGETARCH}" && exit 1 ;; \
-    esac > /tmp/s6_arch.env
-
-# Load computed arch into build env
-ENV S6_ARCH_FILE=/tmp/s6_arch.env
+ARG S6_S6_ARCH=x86_64
+RUN if [ "$TARGETARCH" = "amd64" ]; then export S6_S6_ARCH="x86_64"; \
+    elif [ "$TARGETARCH" = "arm64" ]; then export S6_S6_ARCH="aarch64"; \
+    elif [ "$TARGETARCH" = "arm/v7" ]; then export S6_S6_ARCH="arm"; \
+    else echo "Unsupported architecture $TARGETARCH" && exit 1; fi \
+    && echo "Building for $TARGETARCH -> s6 overlay $S6_S6_ARCH"
 
 # ----------------------------
-# Install s6-overlay
+# Install s6-overlay using ADD (onearch + noarch)
 # ----------------------------
 ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-noarch.tar.xz /tmp/
+ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-${S6_S6_ARCH}.tar.xz /tmp/
 
-# shell form required to expand sourced env
-RUN . /tmp/s6_arch.env \
- && ADD_URL="https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-${S6_ARCH}.tar.xz" \
- && wget -qO /tmp/s6-overlay-arch.tar.xz "${ADD_URL}" \
- && tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
- && tar -C / -Jxpf /tmp/s6-overlay-arch.tar.xz \
+RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
+ && tar -C / -Jxpf /tmp/s6-overlay-${S6_S6_ARCH}.tar.xz \
  && rm -rf /tmp/*.tar.xz
-
 
 # ----------------------------
 # Copy Python deps from builder
