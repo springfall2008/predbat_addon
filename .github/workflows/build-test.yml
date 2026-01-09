@@ -31,7 +31,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./predbat
-          file: ./predbat/Dockerfile.test
+          file: ./predbat/Dockerfile.alpine
           platforms: linux/amd64,linux/arm64,linux/arm/v8
           push: true
           tags: |
