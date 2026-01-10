@@ -24,5 +24,5 @@ done
 
 echo "[predbat] Starting Predbat"
 
-# 🔑 THIS LINE IS CRITICAL
+# Startup
 exec python3 /addon/startup.py
