@@ -20,11 +20,9 @@ ARG USER_NAME="predbat"
 ARG USER_GROUP="predbat"
 ARG UID="9005"
 ARG GID="9005"
-ARG PREDBAT_VERSION="v8.31.13"
+ARG PREDBAT_VERSION
 ARG BASE_IMAGE
 ARG BUILD_DATE
-ARG S6_VERSION="v3.1.6.2"
-ARG TARGETARCH
 # Set the working directory
 WORKDIR /config
 USER root
@@ -33,40 +31,33 @@ RUN addgroup -S -g ${GID} ${USER_GROUP} \
     && chown -R ${USER_NAME} /config
 
 # ----------------------------
-# s6-overlay Architecture
+# s6-overlay (golden block)
 # ----------------------------
-ARG S6_VERSION="v3.1.6.2"
+ARG S6_VERSION=v3.1.6.2
 ARG TARGETARCH
 
-# Map Docker arch → s6 arch (static, build-time safe)
-ARG S6_ARCH_AMD64="x86_64"
-ARG S6_ARCH_ARM64="aarch64"
-ARG S6_ARCH_ARM="arm"
-
-# Select s6 arch based on TARGETARCH
-ARG S6_ARCH
-RUN case "${TARGETARCH}" in \
-      amd64)  echo "S6_ARCH=${S6_ARCH_AMD64}" ;; \
-      arm64)  echo "S6_ARCH=${S6_ARCH_ARM64}" ;; \
-      arm)    echo "S6_ARCH=${S6_ARCH_ARM}" ;; \
-      *) echo "Unsupported architecture ${TARGETARCH}" && exit 1 ;; \
-    esac > /tmp/s6_arch.env
-
-# Load computed arch into build env
-ENV S6_ARCH_FILE=/tmp/s6_arch.env
-
-# ----------------------------
-# Install s6-overlay
-# ----------------------------
+# noarch overlay (always required)
 ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-noarch.tar.xz /tmp/
 
-# shell form required to expand sourced env
-RUN . /tmp/s6_arch.env \
- && ADD_URL="https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-${S6_ARCH}.tar.xz" \
- && wget -qO /tmp/s6-overlay-arch.tar.xz "${ADD_URL}" \
- && tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
- && tar -C / -Jxpf /tmp/s6-overlay-arch.tar.xz \
- && rm -rf /tmp/*.tar.xz
+# arch-specific overlays (static ADDs – Dockerfile-safe)
+ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-x86_64.tar.xz /tmp/s6-overlay-amd64.tar.xz
+ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-aarch64.tar.xz /tmp/s6-overlay-arm64.tar.xz
+ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-arm.tar.xz /tmp/s6-overlay-arm.tar.xz
+
+RUN set -eux; \
+    # install common overlay
+    tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz; \
+    \
+    # install arch-specific overlay
+    case "${TARGETARCH}" in \
+      amd64)  tar -C / -Jxpf /tmp/s6-overlay-amd64.tar.xz ;; \
+      arm64)  tar -C / -Jxpf /tmp/s6-overlay-arm64.tar.xz ;; \
+      arm)    tar -C / -Jxpf /tmp/s6-overlay-arm.tar.xz ;; \
+      *) echo "Unsupported architecture: ${TARGETARCH}" && exit 1 ;; \
+    esac; \
+    \
+    # cleanup
+    rm -rf /tmp/*.tar.xz
 
 
 # ----------------------------

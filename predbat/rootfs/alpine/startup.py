@@ -12,14 +12,14 @@ root = "/config"
 if not os.path.exists(root):
     root = "./"
 
-# Download the latest Predbat release from Github
+# Download the latest Predbat release from GitHub
 if not os.path.exists(root + "/apps.yaml"):
     url = "https://api.github.com/repos/springfall2008/batpred/releases"
     print("Download Predbat release list from {}".format(url))
     try:
         r = requests.get(url)
     except Exception:
-        print("Error: Unable to load data from Github url: {}".format(url))
+        print("Error: Unable to load data from GitHub url: {}".format(url))
         print("Sleep 5 minutes before restarting")
         time.sleep(5*60)
         sys.exit(1)
@@ -27,7 +27,7 @@ if not os.path.exists(root + "/apps.yaml"):
     try:
         pdata = r.json()
     except requests.exceptions.JSONDecodeError:
-        print("Error: Unable to decode data from Github url: {}".format(url))
+        print("Error: Unable to decode data from GitHub url: {}".format(url))
         print("Sleep 5 minutes before restarting")
         time.sleep(5*60)
         sys.exit(1)
