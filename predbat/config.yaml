@@ -1,6 +1,6 @@
 ---
 name: Predbat
-version: 1.5.7
+version: 1.5.8
 slug: predbat
 description: Home Battery Prediction and Control
 url: https://github.com/nipar4/predbat_addon
@@ -25,10 +25,11 @@ hassio_role: admin
 auth_api: true
 map:
   - addon_config:rw
-  - homeassistant_config:rw
-  - media:rw
-  - share:rw
-  - ssl
+  - addons
+#  - homeassistant_config:rw
+#  - media:rw
+#  - share:rw
+#  - ssl
 options:
   dummy: []
 schema:
