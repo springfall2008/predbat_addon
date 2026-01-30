@@ -1,6 +1,6 @@
 ---
 name: Predbat
-version: 1.5.6
+version: 1.5.7
 slug: predbat
 description: Home Battery Prediction and Control
 url: https://github.com/nipar4/predbat_addon
