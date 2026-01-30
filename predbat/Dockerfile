@@ -6,21 +6,10 @@ FROM $BUILD_FROM
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# Install Python and pip in a single layer
-# Using python3 instead of python3-minimal for better pip package compatibility
-#RUN apt-get update \
-#    && apt-get upgrade -y \
-#    && apt-get install -y --no-install-recommends \
-#        python3 \
-#        python3-pip \
-#    && rm -rf /var/lib/apt/lists/*
-
 WORKDIR /config
-#ADD https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/config/* config/
-ADD rootfs/addon/* /
-#ADD rootfs/config /
-#COPY rootfs/addon /addon/
-COPY rootfs/etc/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
+ADD rootfs /
+
+#COPY rootfs/etc/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
 # COPY ingress.conf /etc/nginx/http.d/
 
 COPY requirements.txt /tmp/
