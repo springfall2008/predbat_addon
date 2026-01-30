@@ -72,7 +72,7 @@ if not os.path.exists(root + "/apps.yaml"):
 #  UPDATED by Nic
 #
 print("Startup")
-os.system("cd " + root + "; python3 /data/hass.py")
+os.system("cd " + root + "; python3 hass.py")
 
 print("Shutdown, sleeping 20 seconds before restarting")
 time.sleep(20)

@@ -17,7 +17,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 WORKDIR /config
 #ADD https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/config/* config/
-ADD rootfs/addon/* /data/
+ADD rootfs/addon/* /
 #ADD rootfs/config /
 #COPY rootfs/addon /addon/
 COPY rootfs/etc/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
@@ -27,7 +27,7 @@ COPY requirements.txt /tmp/
 RUN pip install --break-system-packages -r /tmp/requirements.txt
 
 # Start app
-RUN chmod a+x /data/run.sh
+RUN chmod a+x /run.sh
 
 ARG BUILD_ARCH
 ARG BUILD_DATE
