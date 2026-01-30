@@ -6,4 +6,4 @@
 # ==============================================================================
 
 bashio::log.info "Predbat init script running"
-exec /run.sh
+exec /data/run.sh

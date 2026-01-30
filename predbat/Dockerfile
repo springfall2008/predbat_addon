@@ -18,7 +18,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 WORKDIR /config
 #ADD https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/config/* config/
 ADD rootfs/addon/* /data/
-ADD rootfs/config /
+#ADD rootfs/config /
 #COPY rootfs/addon /addon/
 COPY rootfs/etc/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
 # COPY ingress.conf /etc/nginx/http.d/
