@@ -1,6 +1,6 @@
 ---
 build_from:
-  amd64: "ghcr.io/home-assistant/amd64-base-python"
+  amd64: "ghcr.io/home-assistant/amd64-base-python:3.12-alpine3.23-2025.12.2"
   aarch64: "ghcr.io/hassio-addons/ubuntu-base/aarch64:10.0.5"
   armhf: "ghcr.io/hassio-addons/ubuntu-base/armhf:10.0.5"
   armv7: "ghcr.io/hassio-addons/ubuntu-base/armv7:10.0.5"
