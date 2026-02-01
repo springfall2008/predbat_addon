@@ -17,6 +17,7 @@ RUN apt-get install -y python3-tz
 RUN apt-get install -y python3-jinja2
 RUN apt-get install -y python3-ruamel.yaml
 RUN apt-get install -y python3-mcp
+RUN apt-get install -y python3-numpy
 
 WORKDIR /config
 COPY rootfs /config

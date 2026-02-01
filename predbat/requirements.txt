@@ -5,3 +5,4 @@ aiohttp
 Jinja2
 ruamel.yaml==0.18.17
 pyjwt
+numpy
