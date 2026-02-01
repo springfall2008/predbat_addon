@@ -8,6 +8,7 @@ codenotary: tdlj@tdlj.net
 ingress: True
 ingress_port: 5052
 ingress_root: "/"
+panel_icon: mdi:bat
 ports:
   8199/tcp: 8199
 arch:
