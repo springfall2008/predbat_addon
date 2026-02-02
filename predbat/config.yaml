@@ -1,6 +1,6 @@
 ---
 name: Predbat
-version: 1.5.92
+version: 1.5.2
 slug: predbat
 description: Home Battery Prediction and Control
 url: https://github.com/nipar4/predbat_addon
@@ -9,6 +9,7 @@ codenotary: tdlj@tdlj.net
 ingress: true
 ingress_port: 5052
 ingress_root: "/"
+panel_icon: mdi:bat
 ports:
   8199/tcp: 8199
 arch:
