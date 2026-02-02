@@ -1,0 +1,4 @@
+#!/command/execlineb -P
+with-contenv
+#/bin/sh /etc/s6-overlay/s6-rc.d/wait-for-ha/up
+/etc/s6-overlay/s6-rc.d/wait-for-ha/up

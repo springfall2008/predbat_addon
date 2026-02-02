@@ -1,0 +1,3 @@
+#!/command/execlineb -P
+with-contenv
+exec /etc/s6-overlay/s6-rc.d/wait-for-ha/ha-startup.sh

@@ -1,4 +1,28 @@
-#!/command/execlineb -P
-with-contenv
-s6-setuidgid predbat
-/addon/run.docker.sh
+#!/command/with-contenv /bin/sh
+set -eu
+
+: "${WAIT_FOR_HA_HOST:=}"
+: "${WAIT_FOR_HA_PORT:=}"
+: "${WAIT_FOR_HA_INTERVAL:=10}"
+: "${DELAY_INTERVAL:=10}"
+
+HA_HOST="$WAIT_FOR_HA_HOST"
+HA_PORT="$WAIT_FOR_HA_PORT"
+INTERVAL="$WAIT_FOR_HA_INTERVAL"
+
+if [ -n "$WAIT_FOR_HA_HOST" ] && [ -n "$WAIT_FOR_HA_PORT" ]; then
+    echo "[predbat] waiting for Home Assistant at ${HA_HOST}:${HA_PORT}"
+
+    until nc -z -w2 "$HA_HOST" "$HA_PORT"; do
+        echo "[predbat] HA not ready, retrying in ${INTERVAL}s"
+        sleep "$INTERVAL"
+    done
+
+    echo "[predbat] HA available — delaying ${DELAY_INTERVAL}s for stability"
+    sleep "$DELAY_INTERVAL"
+else
+    echo "[predbat] HA waiting disabled (env vars not set)"
+fi
+
+echo "[predbat] starting Predbat"
+exec /addon/run.docker.sh
