@@ -31,7 +31,7 @@ RUN addgroup -S -g ${GID} ${USER_GROUP} \
     && chown -R ${USER_NAME} /config
 
 # ----------------------------
-# s6-overlay (golden block)
+# s6-overlay (Copy this bit for all Dockerfiles)
 # ----------------------------
 ARG S6_VERSION=v3.1.6.2
 ARG TARGETARCH
@@ -59,6 +59,10 @@ RUN set -eux; \
     # cleanup
     rm -rf /tmp/*.tar.xz
 
+# ----------------------------
+# s6-overlay EOF (Copy this bit for all Dockerfiles)
+# ----------------------------
+
 
 # ----------------------------
 # Copy Python deps from builder
@@ -76,7 +80,7 @@ COPY rootfs/docker/s6-rc/ /etc/s6-overlay/s6-rc.d/
 
 LABEL \
     io.hass.type="addon" \
-    addon.version="1.4.1" \
+    addon.version="1.5.2" \
     maintainer="nipar4 (https://github.com/nipar4/predbat_addon)" \
     org.opencontainers.image.vendor="Springfall2008" \
     org.opencontainers.image.authors="springfall2008, nipar4" \
