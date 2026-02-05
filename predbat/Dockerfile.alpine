@@ -1,21 +1,49 @@
 ARG BASE_IMAGE="python:3.13-alpine"
-# Use the official lightweight Python base image
+
+# -------------------------------------------------
+# Python deps builder
+# -------------------------------------------------
 FROM ${BASE_IMAGE} AS builder
-# Set the working directory
 WORKDIR /install
 
-# Install gcc and build python requirements && remove all cached and uneeded files/packages
 COPY requirements.txt /
-RUN <<EOF
-apk add --no-cache --virtual .build-deps gcc g++ libffi-dev musl-dev
-pip install --no-cache-dir --prefix=/install -r /requirements.txt
-apk del .build-deps
-echo "Cleaning Up"
-rm -rf /var/cache/apk/* /requirements.txt
-EOF
 
-# Final stage
+RUN set -eux; \
+    apk add --no-cache --virtual .build-deps gcc g++ libffi-dev musl-dev; \
+    pip install --no-cache-dir --prefix=/install -r /requirements.txt
+
+# -------------------------------------------------
+# s6-overlay builder
+# -------------------------------------------------
+FROM ${BASE_IMAGE} AS s6-builder
+
+ARG S6_VERSION=v3.2.2.0
+ARG TARGETARCH
+
+WORKDIR /tmp/s6
+
+RUN apk add --no-cache ca-certificates xz
+
+ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-noarch.tar.xz .
+ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-x86_64.tar.xz s6-overlay-amd64.tar.xz
+ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-aarch64.tar.xz s6-overlay-arm64.tar.xz
+ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-arm.tar.xz s6-overlay-arm.tar.xz
+
+RUN set -eux; \
+    mkdir -p /s6-root; \
+    tar -C /s6-root -Jxpf s6-overlay-noarch.tar.xz; \
+    case "${TARGETARCH}" in \
+      amd64) tar -C /s6-root -Jxpf s6-overlay-amd64.tar.xz ;; \
+      arm64) tar -C /s6-root -Jxpf s6-overlay-arm64.tar.xz ;; \
+      arm)   tar -C /s6-root -Jxpf s6-overlay-arm.tar.xz ;; \
+      *) echo "Unsupported architecture: ${TARGETARCH}" && exit 1 ;; \
+    esac
+
+# -------------------------------------------------
+# Final runtime stage
+# -------------------------------------------------
 FROM ${BASE_IMAGE}
+
 ARG USER_NAME="predbat"
 ARG USER_GROUP="predbat"
 ARG UID="9005"
@@ -23,77 +51,30 @@ ARG GID="9005"
 ARG PREDBAT_VERSION
 ARG BASE_IMAGE
 ARG BUILD_DATE
-# Set the working directory
+
 WORKDIR /config
 USER root
-RUN addgroup -S -g ${GID} ${USER_GROUP} \
-    && adduser -D -u ${UID} -G ${USER_GROUP} ${USER_NAME} \
-    && chown -R ${USER_NAME} /config
-
-# ----------------------------
-# s6-overlay (Copy this bit for all Dockerfiles)
-# ----------------------------
-ARG S6_VERSION=v3.1.6.2
-ARG TARGETARCH
-
-# noarch overlay (always required)
-ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-noarch.tar.xz /tmp/
-
-# arch-specific overlays (static ADDs – Dockerfile-safe)
-ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-x86_64.tar.xz /tmp/s6-overlay-amd64.tar.xz
-ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-aarch64.tar.xz /tmp/s6-overlay-arm64.tar.xz
-ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-arm.tar.xz /tmp/s6-overlay-arm.tar.xz
 
 RUN set -eux; \
-    # install common overlay
-    tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz; \
-    \
-    # install arch-specific overlay
-    case "${TARGETARCH}" in \
-      amd64)  tar -C / -Jxpf /tmp/s6-overlay-amd64.tar.xz ;; \
-      arm64)  tar -C / -Jxpf /tmp/s6-overlay-arm64.tar.xz ;; \
-      arm)    tar -C / -Jxpf /tmp/s6-overlay-arm.tar.xz ;; \
-      *) echo "Unsupported architecture: ${TARGETARCH}" && exit 1 ;; \
-    esac; \
-    \
-    # cleanup
-    rm -rf /tmp/*.tar.xz
+    apk add --no-cache netcat-openbsd; \
+    addgroup -S -g ${GID} ${USER_GROUP}; \
+    adduser -D -u ${UID} -G ${USER_GROUP} ${USER_NAME}; \
+    chown -R ${USER_NAME} /config
 
-# ----------------------------
-# s6-overlay EOF (Copy this bit for all Dockerfiles)
-# ----------------------------
+# s6-overlay
+COPY --from=s6-builder /s6-root/ /
 
-
-# ----------------------------
-# Copy Python deps from builder
-# ----------------------------
+# Python deps
 COPY --from=builder /install /usr/local/
-# Copy only the necessary files from github
-ADD --chown=${USER_NAME} https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/ https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/config/ rootfs/alpine/* /addon/
-#RUN chmod +x /addon/run.standalone.sh
 
-# ----------------------------
-# Copy s6 service definition
-# ----------------------------
+# App files
+ADD --chown=${USER_NAME} \
+    https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/ \
+    https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/config/ \
+    rootfs/alpine/* \
+    /addon/
+
+# s6 service definitions
 COPY rootfs/docker/s6-rc/ /etc/s6-overlay/s6-rc.d/
 
-
-LABEL \
-    io.hass.type="addon" \
-    addon.version="1.5.2" \
-    maintainer="nipar4 (https://github.com/nipar4/predbat_addon)" \
-    org.opencontainers.image.vendor="Springfall2008" \
-    org.opencontainers.image.authors="springfall2008, nipar4" \
-    org.opencontainers.image.licenses="MIT" \
-    org.opencontainers.image.url="https://github.com/springfall2008, https://github.com/nipar4/predbat_addon" \
-    org.opencontainers.image.source="https://github.com/nipar4/predbat_addon" \
-    org.opencontainers.image.documentation="https://github.com/springfall2008/predbat_addon/blob/main/predbat/DOCS.md" \
-    org.opencontainers.image.created=${BUILD_DATE} \
-    org.opencontainers.image.title="Predbat Addon Docker version" \
-    org.opencontainers.image.base.digest=${BASE_IMAGE} \
-    org.opencontainers.image.version=${PREDBAT_VERSION}
-
-# ----------------------------
-# s6 becomes PID 1
-# ----------------------------
 ENTRYPOINT ["/init"]

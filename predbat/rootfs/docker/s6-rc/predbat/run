@@ -13,7 +13,7 @@ INTERVAL="$WAIT_FOR_HA_INTERVAL"
 if [ -n "$WAIT_FOR_HA_HOST" ] && [ -n "$WAIT_FOR_HA_PORT" ]; then
     echo "[predbat] waiting for Home Assistant at ${HA_HOST}:${HA_PORT}"
 
-    until nc -z -w2 "$HA_HOST" "$HA_PORT"; do
+    until nc -z -w2 "$HA_HOST" "$HA_PORT" >/dev/null 2>&1; do
         echo "[predbat] HA not ready, retrying in ${INTERVAL}s"
         sleep "$INTERVAL"
     done

@@ -17,7 +17,7 @@ if [ -n "$WAIT_FOR_HA_HOST" ] && [ -n "$WAIT_FOR_HA_PORT" ]; then
     echo "[wait-for-ha] monitoring HA at $HA_HOST:$HA_PORT"
 
     # Wait until HA exists before entering monitor loop
-    until nc -z -w2 "$HA_HOST" "$HA_PORT"; do
+    until nc -z -w2 "$HA_HOST" "$HA_PORT" >/dev/null 2>&1; do
         echo "[wait-for-ha] HA not ready, retrying in ${INTERVAL}s"
         sleep "$INTERVAL"
     done
@@ -26,7 +26,7 @@ if [ -n "$WAIT_FOR_HA_HOST" ] && [ -n "$WAIT_FOR_HA_PORT" ]; then
 
     FAILS=0
     while :; do
-        if nc -z -w2 "$HA_HOST" "$HA_PORT"; then
+        if nc -z -w2 "$HA_HOST" "$HA_PORT" >/dev/null 2>&1; then
             FAILS=0
         else
             FAILS=$((FAILS + 1))

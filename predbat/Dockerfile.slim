@@ -1,26 +1,51 @@
 ARG BASE_IMAGE="python:3.13-slim-bookworm"
-# Use the official lightweight Python base image
+
+# -------------------------------------------------
+# Python deps builder
+# -------------------------------------------------
 FROM ${BASE_IMAGE} AS builder
-
-# Set the working directory
-
 WORKDIR /install
 
-
-# Install gcc and build python requirements && remove all cached and uneeded files/packages
 COPY requirements.txt /
-RUN <<EOF
-apt-get update
-apt-get install --yes --no-install-recommends gcc g++ libffi-dev
-# Install Python packages
-pip install --no-cache-dir --prefix=/install -r /requirements.txt
-apt-get purge --yes gcc g++ libff1-dev
-apt-get autoremove --yes
-rm -rf /var/lib/apt/lists/* /requirements.txt
-EOF
 
-# Final stage
+RUN set -eux; \
+    apt-get update; \
+    apt-get install --yes --no-install-recommends gcc g++ libffi-dev; \
+    pip install --no-cache-dir --prefix=/install -r /requirements.txt
+
+# -------------------------------------------------
+# s6-overlay builder
+# -------------------------------------------------
+FROM ${BASE_IMAGE} AS s6-builder
+
+ARG S6_VERSION=v3.2.2.0
+ARG TARGETARCH
+
+WORKDIR /tmp/s6
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends ca-certificates xz-utils
+
+ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-noarch.tar.xz .
+ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-x86_64.tar.xz s6-overlay-amd64.tar.xz
+ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-aarch64.tar.xz s6-overlay-arm64.tar.xz
+ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-arm.tar.xz s6-overlay-arm.tar.xz
+
+RUN set -eux; \
+    mkdir -p /s6-root; \
+    tar -C /s6-root -Jxpf s6-overlay-noarch.tar.xz; \
+    case "${TARGETARCH}" in \
+      amd64) tar -C /s6-root -Jxpf s6-overlay-amd64.tar.xz ;; \
+      arm64) tar -C /s6-root -Jxpf s6-overlay-arm64.tar.xz ;; \
+      arm)   tar -C /s6-root -Jxpf s6-overlay-arm.tar.xz ;; \
+      *) echo "Unsupported architecture: ${TARGETARCH}" && exit 1 ;; \
+    esac
+
+# -------------------------------------------------
+# Final runtime stage
+# -------------------------------------------------
 FROM ${BASE_IMAGE}
+
 ARG USER_NAME="predbat"
 ARG USER_GROUP="predbat"
 ARG UID="9005"
@@ -28,39 +53,28 @@ ARG GID="9005"
 ARG PREDBAT_VERSION
 ARG BASE_IMAGE
 ARG BUILD_DATE
-# Set the working directory
+
 WORKDIR /config
-
-RUN addgroup -gid ${GID} ${USER_GROUP} \
-    && adduser -uid ${UID} -gid ${GID} ${USER_NAME} \
-    && chown -R ${USER_NAME} /config
-
 USER root
 
-# Copy only the necessary files from the builder stage
-# Copy Python packages from the builder stage
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends netcat-openbsd ca-certificates; \
+    groupadd -g ${GID} ${USER_GROUP}; \
+    useradd -u ${UID} -g ${GID} -m -s /bin/bash ${USER_NAME}; \
+    chown -R ${USER_NAME} /config; \
+    rm -rf /var/lib/apt/lists/*
+
+# s6-overlay
+COPY --from=s6-builder /s6-root/ /
 COPY --from=builder /install /usr/local/
 
-# Copy required files including requirements file and install build dependencies
-ADD --chown=${USER_NAME} https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/ https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/config/ rootfs/alpine/* /addon/
-RUN chmod +x /addon/run.standalone.sh
-USER root
-# Define build arguments and labels
+ADD --chown=${USER_NAME} \
+  https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/ \
+  https://github.com/springfall2008/batpred.git#$PREDBAT_VERSION:apps/predbat/config/ \
+  rootfs/alpine/* \
+  /addon/
 
-LABEL \
-    io.hass.type="addon" \
-    addon.version="1.5.2" \
-    maintainer="nipar4 (https://github.com/nipar4/predbat_addon)" \
-    org.opencontainers.image.vendor="Springfall2008" \
-    org.opencontainers.image.authors="springfall2008, nipar4" \
-    org.opencontainers.image.licenses="MIT" \
-    org.opencontainers.image.url="https://github.com/springfall2008, https://github.com/nipar4/predbat_addon" \
-    org.opencontainers.image.source="https://github.com/nipar4/predbat_addon" \
-    org.opencontainers.image.documentation="https://github.com/springfall2008/predbat_addon/blob/main/predbat/DOCS.md" \
-    org.opencontainers.image.created=${BUILD_DATE} \
-    org.opencontainers.image.title="Predbat Addon Docker version" \
-    org.opencontainers.image.base.digest=${BASE_IMAGE} \
-    org.opencontainers.image.version=${PREDBAT_VERSION}
+COPY rootfs/docker/s6-rc/ /etc/s6-overlay/s6-rc.d/
 
-# Set the entrypoint to the startup script
-ENTRYPOINT ["sh", "/addon/run.standalone.sh"]
+ENTRYPOINT ["/init"]
