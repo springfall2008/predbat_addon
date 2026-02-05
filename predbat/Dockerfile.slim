@@ -59,10 +59,11 @@ USER root
 
 RUN set -eux; \
     apt-get update; \
-    apt-get install -y --no-install-recommends netcat-openbsd ca-certificates; \
+    apt-get install -y --no-install-recommends netcat-openbsd ca-certificates wget; \
     groupadd -g ${GID} ${USER_GROUP}; \
     useradd -u ${UID} -g ${GID} -m -s /bin/bash ${USER_NAME}; \
     chown -R ${USER_NAME} /config; \
+    apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
 # s6-overlay
