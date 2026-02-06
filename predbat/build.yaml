@@ -1,7 +1,7 @@
 ---
 build_from:
-  amd64: "ghcr.io/home-assistant/amd64-base-python:3.12-alpine3.23-2025.12.2"
-  aarch64: "ghcr.io/home-assistant/aarch64-base-python:3.13-alpine3.23-2025.12.2"
+  amd64: "ghcr.io/home-assistant/amd64-base-python:3.12-alpine3.23-2026.02.0"
+  aarch64: "ghcr.io/home-assistant/aarch64-base-python:3.12-alpine3.23-2026.02.0"
 ##  These should be removed as they are no longer supported by Home Assistant keeping only amd64 and aarch64
 #  armhf: "ghcr.io/home-assistant/armhf-base-python:3.13-alpine3.21-2025.11.1"
 #  armv7: "ghcr.io/home-assistant/armv7-base-python:3.13-alpine3.21-2025.11.1"
