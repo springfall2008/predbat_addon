@@ -4,7 +4,7 @@ ARG BUILD_VERSION
 FROM $BUILD_FROM
 
 # Set shell
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+#SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 WORKDIR /config
 ADD rootfs /
