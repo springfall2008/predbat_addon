@@ -15,17 +15,25 @@ ports:
 arch:
   - aarch64
   - amd64
-  - armv7
+# Remove as no longer supported by Home Assistant
+#  - armv7
 init: false
-# Changed from services to application to startup after HA
-startup: application
+# Changed from services to application to startup after HA (Default is application so remove)
+#startup: application
 boot: auto
 homeassistant_api: true
 hassio_api: true
 hassio_role: admin
 auth_api: true
 map:
-  - addon_config:rw
+  addon_config:
+    - read_only: false
+  app:
+    - read_only: false
+  data:
+    - read_only: false
+
+#  Remove these as I dont think they are required
 #  - addons:rw
 #  - homeassistant_config:rw
 #  - media:rw
