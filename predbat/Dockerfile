@@ -7,16 +7,13 @@ FROM $BUILD_FROM
 SHELL ["/bin/sh", "-o", "pipefail", "-c"]
 
 WORKDIR /config
-ADD rootfs /
-
-#COPY rootfs/etc/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
-# COPY ingress.conf /etc/nginx/http.d/
+ADD rootfs requirements.txt /
 
 COPY requirements.txt /tmp/
 RUN apk add py3-pip; \
-    pip install --no-cache-dir --break-system-packages -r /tmp/requirements.txt  && rm /tmp/requirements.txt
+    pip install --no-cache-dir --break-system-packages -r /requirements.txt  && rm /requirements.txt
 
-# Start app
+# make app executable
 RUN chmod a+x /run.sh
 
 ARG BUILD_ARCH
@@ -44,5 +41,3 @@ LABEL \
     org.opencontainers.image.created=${BUILD_DATE} \
     org.opencontainers.image.revision=${BUILD_REF} \
     org.opencontainers.image.version=${BUILD_VERSION}
-
-#CMD [ "/run.sh" ]
