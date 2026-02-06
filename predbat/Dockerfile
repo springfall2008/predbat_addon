@@ -4,7 +4,7 @@ ARG BUILD_VERSION
 FROM $BUILD_FROM
 
 # Set shell
-#SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+SHELL ["/bin/sh", "-o", "pipefail", "-c"]
 
 WORKDIR /config
 ADD rootfs /
@@ -13,7 +13,8 @@ ADD rootfs /
 # COPY ingress.conf /etc/nginx/http.d/
 
 COPY requirements.txt /tmp/
-RUN pip install --no-cache-dir --break-system-packages -r /tmp/requirements.txt  && rm /tmp/requirements.txt
+RUN apk add py3-pip; \
+    pip install --no-cache-dir --break-system-packages -r /tmp/requirements.txt  && rm /tmp/requirements.txt
 
 # Start app
 RUN chmod a+x /run.sh
