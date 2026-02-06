@@ -13,7 +13,7 @@ COPY requirements.txt /tmp/
 RUN apk add py3-pip; \
     pip install --no-cache-dir --break-system-packages -r /requirements.txt  && rm /requirements.txt
 
-# make app executable
+# #make app executable
 RUN chmod a+x /run.sh
 
 ARG BUILD_ARCH
