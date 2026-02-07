@@ -1,5 +1,9 @@
 # Predbat_addon CHANGELOG
 
+## 1.5.42
+
+- added changelog
+
 ## 1.5.41
 
 - Add Jinja2 to the addon requirements by @iainfogg in #22
