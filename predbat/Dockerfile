@@ -9,7 +9,6 @@ SHELL ["/bin/sh", "-o", "pipefail", "-c"]
 WORKDIR /config
 ADD rootfs requirements.txt /
 
-COPY requirements.txt /tmp/
 RUN apk add py3-pip; \
     pip install --no-cache-dir --break-system-packages -r /requirements.txt  && rm /requirements.txt
 
