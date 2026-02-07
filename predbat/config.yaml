@@ -22,12 +22,6 @@ auth_api: true
 map:
   - addon_config:rw
 #  - data:rw
-#  Remove these as I dont think they are required
-#  - addons:rw
-#  - homeassistant_config:rw
-#  - media:rw
-#  - share:rw
-#  - ssl
 options:
   dummy: []
 schema:
