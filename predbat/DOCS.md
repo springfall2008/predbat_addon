@@ -1,6 +1,6 @@
-#  Predbat Home Assistant Add-on
+#  Predbat Home Assistant App
 
-This add-on can be used with Home Assistant to run Predbat without AppDaemon, or even outside Home Assistant
+This app can be used with Home Assistant to run Predbat without AppDaemon, or even outside Home Assistant
 
 ![image](https://github.com/springfall2008/predbat_addon/assets/48591903/50580da1-5110-4711-b740-1c14cc103835)
 
@@ -9,11 +9,11 @@ For Predbat documention see: https://springfall2008.github.io/batpred/
 If you want to buy me a beer then please use Paypal - [tdlj@tdlj.net](mailto:tdlj@tdlj.net)
 ![image](https://github.com/springfall2008/batpred/assets/48591903/b3a533ef-0862-4e0b-b272-30e254f58467)
 
-## Installation as an add-on in Home Assistant
+## Installation as an app in Home Assistant
 
-[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fspringfall2008%2Fpredbat_addon)
+[![Open your Home Assistant instance and show the add app repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fspringfall2008%2Fpredbat_addon)
 
-* Go to settings, add-ons, add-on store, custom repositories
+* Go to settings, apps, install app, custom repositories
 * Add 'https://github.com/springfall2008/predbat_addon' as a new repository
 
 ![image](https://github.com/springfall2008/predbat_addon/assets/48591903/7eb18076-888b-4ea5-844b-cfa93157b759)
@@ -23,8 +23,8 @@ If you want to buy me a beer then please use Paypal - [tdlj@tdlj.net](mailto:tdl
 * Once installed you can click start, it will now download the latest Predbat and start it running
 * Predbat will error out as you have a Template configuration
 * Navigate to `/addon_configs/6adb4f0d_predbat` directory in Home Assistant file editor or via a Samba/SSH mount
-* Edit/replace the apps.yaml with the correct completed one as per Predbat documentation
-* Click restart on the add-on if need be (it might start automatically anyhow)
+* Edit/replace the `apps.yaml` with the correct completed one as per Predbat documentation
+* Click restart on the app if need be (it might start automatically anyhow)
 
 Please note the predbat.log will be in this addon_configs directory also.
 
@@ -49,7 +49,7 @@ Predbat can be run on a seperate machine also, you will need a MacOS with Python
 * You should see Dockerfile.standalone and rootfs directories
 * Download *.py from Predbat repo (https://github.com/springfall2008/batpred/blob/main/apps/predbat/predbat.py) and place the code into rootfs
 * Download apps.yaml from Predbat repo (https://github.com/springfall2008/batpred/blob/main/apps/predbat/config/apps.yaml), place it into rootfs and edit it as per the Predbat documentation
-* Add `ha_url` / `ha_key` settings into apps.yaml.
+* Add `ha_url` / `ha_key` settings into `apps.yaml`.
   * The `ha_url` must be your Home Assistant machine e.g. http://homeassistant.local:8123
   * The `ha_key` must be the persistant key you can generate in Home Assistant in your user/security section
 
@@ -68,7 +68,7 @@ Credit to Nic for building this
 
 These are all prebuilt images that will support both amd64 & arm processors (so Raspberry PI, most NAS & PCs). They can be installed as either a fully enclosed container or a container with mounted external volumes and will populate the /config directory on creation and start-up. To do this I have a run.standalone.sh start-up file which does the file copy on first boot - I do not use the run.csh or run.sh start-up files from the add-on although they are pretty much the same as I wanted to standardise on one start-up file that supported all architectures.
 
-As mentioned the only issue I have is that with the template apps.yaml the logs throw lots of errors until a modified config file is added to the volume.
+As mentioned the only issue I have is that with the template `apps.yaml`, the logs throw lots of errors until a modified config file is added to the volume.
 
 ### Running
 
@@ -115,9 +115,9 @@ services:
         - /etc/localtime:/etc/localtime:ro
 ```
 
-## Upgrading from AppDaemon to Predbat add-on
+## Upgrading from AppDaemon to Predbat app
 
-Step-by-step instructions to upgrade from running Predbat within AppDaemon or the AppDaemon-predbat add-on to using this Predbat add-on are included in the [Predbat installation instructions](https://springfall2008.github.io/batpred/install/#upgrading-from-appdaemon-to-predbat-add-on)
+Step-by-step instructions to upgrade from running Predbat within AppDaemon or the AppDaemon-predbat add-on to using this Predbat app are included in the [Predbat installation instructions](https://springfall2008.github.io/batpred/install/#upgrading-from-appdaemon-to-predbat-app)
 
 ## Copyright
 
