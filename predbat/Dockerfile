@@ -4,25 +4,15 @@ ARG BUILD_VERSION
 FROM $BUILD_FROM
 
 # Set shell
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+SHELL ["/bin/sh", "-o", "pipefail", "-c"]
 
-# Install Python and pip in a single layer
-# Using python3 instead of python3-minimal for better pip package compatibility
-RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get install -y --no-install-recommends \
-        python3 \
-        python3-pip \
-    && rm -rf /var/lib/apt/lists/*
+WORKDIR /config
+ADD rootfs requirements.txt /
 
-WORKDIR /app_data
-COPY rootfs /
-# COPY ingress.conf /etc/nginx/http.d/
+RUN apk add py3-pip; \
+    pip install --no-cache-dir --break-system-packages -r /requirements.txt  && rm /requirements.txt
 
-COPY requirements.txt /tmp/
-RUN pip install --break-system-packages -r /tmp/requirements.txt
-
-# Start app
+# #make app executable
 RUN chmod a+x /run.sh
 
 ARG BUILD_ARCH
@@ -50,5 +40,3 @@ LABEL \
     org.opencontainers.image.created=${BUILD_DATE} \
     org.opencontainers.image.revision=${BUILD_REF} \
     org.opencontainers.image.version=${BUILD_VERSION}
-
-#CMD [ "/run.sh" ]
