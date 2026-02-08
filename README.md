@@ -1,7 +1,7 @@
-#  Predbat Home Assistant Add-on
-Predbat Home Assistant Add-on
+#  Predbat Home Assistant App
+Predbat Home Assistant App
 
-This add-on can be used with Home Assistant to run Predbat without AppDaemon
+This app can be used with Home Assistant to run Predbat without AppDaemon
 
 The code here can also be used to run Predbat outside Home Assistant (but still talking to Home Assistant)
 
