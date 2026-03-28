@@ -2,7 +2,7 @@ pytz
 requests
 pyyaml
 aiohttp
-aiomqqt
+aiomqtt
 Jinja2
 ruamel.yaml==0.18.17
 pyjwt
