@@ -2,8 +2,10 @@ pytz
 requests
 pyyaml
 aiohttp
+aiomqqt
 Jinja2
 ruamel.yaml==0.18.17
 pyjwt
 numpy==2.3.5
 prometheus-client
+protobuf
