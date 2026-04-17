@@ -21,6 +21,7 @@ RUN apt-get install -y python3-mcp
 RUN apt-get install -y python3-numpy
 RUN apt-get install -y python3-prometheus-client
 RUN apt-get install -y python3-protobuf
+RUN apt-get install -y python3-pvlib
 
 WORKDIR /config
 COPY rootfs /config
