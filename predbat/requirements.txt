@@ -9,3 +9,4 @@ pyjwt
 numpy==2.3.5
 prometheus-client
 protobuf
+pvlib
