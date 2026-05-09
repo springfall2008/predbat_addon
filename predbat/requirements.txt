@@ -1,6 +1,7 @@
 pytz
 requests
 pyyaml
+aiofiles
 aiohttp
 aiomqtt
 Jinja2
